@@ -7,6 +7,8 @@ import { migrate } from 'drizzle-orm/libsql/migrator'
 import { db } from './db/client.js'
 import { profileRoutes } from './routes/profiles.js'
 import { bootstrapRoutes } from './routes/bootstrap.js'
+import { cardRoutes } from './routes/cards.js'
+import { layoutRoutes } from './routes/layouts.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -47,8 +49,9 @@ export async function buildServer() {
 
   await server.register(bootstrapRoutes, { prefix: '/api' })
   await server.register(profileRoutes, { prefix: '/api' })
+  await server.register(cardRoutes, { prefix: '/api' })
+  await server.register(layoutRoutes, { prefix: '/api' })
 
-  // TODO Phase 1: Register layout routes
   // TODO Phase 2: Register todo routes
   // TODO Phase 2: Register grocery routes
   // TODO Phase 2: Register WebSocket handler

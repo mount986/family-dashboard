@@ -56,7 +56,7 @@ export function ProfileForm({ profile, onDone }: ProfileFormProps) {
           name: name.trim(),
           colorTheme,
           isAdmin,
-          pin: isAdmin ? pin : undefined,
+          ...(isAdmin ? { pin } : {}),
         })
       }
       onDone()

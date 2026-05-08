@@ -31,7 +31,7 @@ export function ProfileManager({ onClose }: ProfileManagerProps) {
           {/* Form view */}
           {editing && (
             <ProfileForm
-              profile={editing === 'new' ? undefined : editing}
+              {...(editing !== 'new' ? { profile: editing } : {})}
               onDone={() => setEditing(null)}
             />
           )}

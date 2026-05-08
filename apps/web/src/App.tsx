@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ProfileSwitcher } from '@/components/profiles/ProfileSwitcher'
 import { ProfileManager } from '@/components/profiles/ProfileManager'
 import { BootstrapScreen } from '@/components/bootstrap/BootstrapScreen'
+import { DashboardGrid } from '@/components/dashboard/DashboardGrid'
 import { useSession } from '@/api/profiles'
 import { useSessionStore } from '@/store/session'
 import { api } from '@/api/client'
@@ -51,14 +52,11 @@ export default function App() {
       </aside>
 
       {/* ── Main content ── */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-hidden flex flex-col">
         {session ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center space-y-2">
-              <p className="text-2xl font-bold text-white">Hi, {session.profileName} 👋</p>
-              <p className="text-slate-500 text-sm">Dashboard coming soon</p>
-            </div>
-          </div>
+          // Key on profileId so DashboardGrid fully remounts on profile switch,
+          // clearing any local layout state from the previous profile.
+          <DashboardGrid key={session.profileId} isAdmin={session.isAdmin} />
         ) : (
           <div className="flex items-center justify-center h-full">
             <p className="text-slate-400 text-lg">Select a profile to get started</p>
