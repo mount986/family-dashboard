@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Dashboard — Design Proposal</title>
+<style>
+  :root {
+    --blue: #2563eb; --blue-light: #dbeafe; --blue-border: #93c5fd;
+    --green: #16a34a; --green-light: #dcfce7; --green-border: #86efac;
+    --purple: #7c3aed; --purple-light: #f3e8ff; --purple-border: #d8b4fe;
+    --orange: #ea580c; --orange-light: #ffedd5; --orange-border: #fdba74;
+    --rose: #e11d48; --rose-light: #ffe4e6; --rose-border: #fda4af;
+    --teal: #0d9488; --teal-light: #ccfbf1; --teal-border: #5eead4;
+    --slate: #475569;
+    --text: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
+    --bg: #f8fafc; --surface: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    color: white;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-tag {
+    display: inline-block;
+    background: rgba(99,102,241,0.3);
+    border: 1px solid rgba(99,102,241,0.5);
+    color: #a5b4fc;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .cover h1 span { color: #818cf8; }
+  .cover-sub {
+    font-size: 18px;
+    color: #94a3b8;
+    max-width: 560px;
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item { }
+  .cover-meta-item .label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #64748b;
+    margin-bottom: 3px;
+  }
+  .cover-meta-item .value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  /* ─── CONTENT ─── */
+  .content { max-width: 900px; margin: 0 auto; padding: 60px 40px; }
+
+  /* ─── SECTION ─── */
+  .section { margin-bottom: 60px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-number {
+    width: 36px; height: 36px;
+    background: var(--text);
+    color: white;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .section-title span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 10px;
+    letter-spacing: 0;
+  }
+
+  /* ─── PROSE ─── */
+  p { margin-bottom: 16px; color: #334155; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ─── TECH STACK TABLE ─── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 600px) { .stack-grid { grid-template-columns: 1fr; } }
+
+  .stack-card {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    background: var(--surface);
+  }
+  .stack-card.recommended {
+    border-color: var(--blue-border);
+    background: var(--blue-light);
+  }
+  .stack-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .stack-card-layer {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+  .stack-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--blue);
+    color: white;
+    letter-spacing: 0.05em;
+  }
+  .stack-tech {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .stack-reason { font-size: 13px; color: #475569; line-height: 1.5; }
+  .stack-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .stack-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    border: 1px solid var(--border);
+  }
+
+  /* ─── FEATURES ─── */
+  .feature-list { display: flex; flex-direction: column; gap: 14px; }
+  .feature-item {
+    display: flex;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+  }
+  .feature-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .feature-body { flex: 1; }
+  .feature-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feature-desc { font-size: 13px; color: #475569; line-height: 1.55; }
+  .feature-note {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 8px;
+  }
+
+  /* ─── DATABASE SCHEMA ─── */
+  .schema-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 700px) { .schema-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .schema-grid { grid-template-columns: 1fr; } }
+
+  .schema-table {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 12px;
+    background: var(--surface);
+  }
+  .schema-table-header {
+    padding: 8px 12px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .schema-table-body { padding: 4px 0; }
+  .schema-row {
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .schema-row:hover { background: #f8fafc; }
+  .field-name { font-weight: 700; color: var(--text); min-width: 90px; }
+  .field-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .field-pk { color: var(--orange); font-size: 10px; }
+  .field-fk { color: var(--purple); font-size: 10px; }
+
+  /* ─── PHASES ─── */
+  .phases { display: flex; flex-direction: column; gap: 0; }
+  .phase {
+    display: flex;
+    gap: 20px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase:last-child { border-bottom: none; }
+  .phase-num {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .phase-body { flex: 1; }
+  .phase-title {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-duration {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .phase-items {
+    font-size: 13px;
+    color: #475569;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .phase-item {
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  /* ─── SECURITY ─── */
+  .security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 600px) { .security-grid { grid-template-columns: 1fr; } }
+  .security-card {
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1.5px solid;
+  }
+  .security-card-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .security-card-body { font-size: 13px; line-height: 1.6; }
+
+  /* ─── CALLOUT ─── */
+  .callout {
+    padding: 16px 20px;
+    border-radius: 10px;
+    border-left: 4px solid;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout-blue { background: var(--blue-light); border-color: var(--blue); color: #1e3a8a; }
+  .callout-green { background: var(--green-light); border-color: var(--green); color: #14532d; }
+  .callout-orange { background: var(--orange-light); border-color: var(--orange); color: #7c2d12; }
+
+  .callout strong { font-weight: 800; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    background: #0f172a;
+    color: #475569;
+    text-align: center;
+    padding: 30px 40px;
+    font-size: 12px;
+  }
+  .footer strong { color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ COVER ═══════════════════════════ -->
+<div class="cover">
+  <div class="cover-tag">Design Proposal · Version 1.1</div>
+  <h1>Family <span>Dashboard</span><br>Platform</h1>
+  <p class="cover-sub">A unified, locally-hosted family management hub — customizable per family member, private by default, accessible everywhere via Tailscale.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Prepared</div>
+      <div class="value">May 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Architecture</div>
+      <div class="value">React + Node.js + SQLite</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Hosting</div>
+      <div class="value">Local · Tailscale VPN</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Deployment</div>
+      <div class="value">k3s + Helm</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CONTENT ═══════════════════════════ -->
+<div class="content">
+
+  <!-- ─── 1. EXECUTIVE SUMMARY ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">Executive Summary</div>
+    </div>
+    <p>The Family Dashboard is a self-hosted web application that acts as a single control center for your household. Each family member gets a personalized, rearrangeable dashboard populated with both built-in apps (grocery lists, to-dos, chore tracker) and live embedded cards pointing to any external site or service.</p>
+    <p>Because this lives entirely on your local network — protected by Tailscale — there is no reliance on any cloud service for the core experience. The application can run on anything from a Raspberry Pi to a home server or NAS, and family members can access it securely from any device, anywhere, via the Tailscale VPN.</p>
+    <div class="callout callout-blue">
+      <strong>Design Philosophy:</strong> Keep it simple to self-host, fast to use daily, and easy to extend. The architecture is intentionally lean — one database file, one Node.js process — packaged as a Helm chart deployed onto a local k3s cluster, with full responsive support from mobile to TV.
+    </div>
+  </div>
+
+  <!-- ─── 2. TECH STACK ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">Recommended Tech Stack</div>
+    </div>
+
+    <div class="stack-grid">
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Frontend Framework</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">React 19 + TypeScript</div>
+        <div class="stack-reason">Component-based architecture is a natural fit for a card/widget dashboard. TypeScript eliminates whole classes of runtime bugs and is essential for a long-lived family project. Vite provides near-instant hot reload during development.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">React 19</span>
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">Vite</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Dashboard Grid</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">React Grid Layout</div>
+        <div class="stack-reason">The industry-standard library for draggable, resizable, responsive grid layouts in React. Supports saving/restoring layouts per user, breakpoints for mobile vs. desktop, and full-screen card expansion. Zero additional dependencies.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">react-grid-layout</span>
+          <span class="stack-tag">drag & drop</span>
+          <span class="stack-tag">resize</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Styling</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">Tailwind CSS v4</div>
+        <div class="stack-reason">Utility-first CSS is ideal for building consistent card UIs quickly. Tailwind v4's improved performance and CSS variable system makes theming per-profile straightforward. No CSS file bloat over time.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Tailwind CSS v4</span>
+          <span class="stack-tag">shadcn/ui</span>
+          <span class="stack-tag">Framer Motion</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">State Management</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">Zustand + TanStack Query</div>
+        <div class="stack-reason">Zustand handles client-side state (active profile, layout state, UI state) with minimal boilerplate. TanStack Query manages all server data fetching, caching, and background refresh — critical for keeping calendar and weather cards current.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Zustand</span>
+          <span class="stack-tag">TanStack Query v5</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Backend</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">Node.js + Fastify</div>
+        <div class="stack-reason">Fastify is 2–3× faster than Express with built-in schema validation and TypeScript support out of the box. It handles REST API routes, WebSocket connections for real-time list sync, and acts as a proxy for Google/weather APIs to keep secrets server-side.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Node.js 22 LTS</span>
+          <span class="stack-tag">Fastify</span>
+          <span class="stack-tag">WebSockets</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Database</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">SQLite + Drizzle ORM</div>
+        <div class="stack-reason">SQLite is the perfect choice for local hosting — zero server setup, single file, trivially backed up. Drizzle ORM provides type-safe queries with automatic TypeScript inference, schema migrations, and is purpose-built for SQLite. No Postgres server to maintain.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">SQLite (better-sqlite3)</span>
+          <span class="stack-tag">Drizzle ORM</span>
+          <span class="stack-tag">WAL mode</span>
+        </div>
+      </div>
+
+      <div class="stack-card recommended">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Deployment &amp; Orchestration</span>
+          <span class="stack-badge">✓ Recommended</span>
+        </div>
+        <div class="stack-tech">k3s + Helm</div>
+        <div class="stack-reason">k3s is a lightweight, production-grade Kubernetes distribution that runs comfortably on a home server or NAS. The app is packaged as a Helm chart with a <code>values.yaml</code> for easy configuration. Traefik (bundled with k3s) handles ingress and TLS. A single <code>helm upgrade --install</code> deploys or updates the app.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">k3s</span>
+          <span class="stack-tag">Helm 3</span>
+          <span class="stack-tag">Traefik Ingress</span>
+          <span class="stack-tag">PersistentVolumeClaim</span>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-card-header">
+          <span class="stack-card-layer">Remote Access</span>
+        </div>
+        <div class="stack-tech">Tailscale</div>
+        <div class="stack-reason">Tailscale creates an encrypted WireGuard mesh network between all your family's devices. No ports to open on your router, no dynamic DNS to manage. Each device gets a stable Tailscale IP. The dashboard is only reachable from trusted, authenticated devices.</div>
+        <div class="stack-tags">
+          <span class="stack-tag">WireGuard</span>
+          <span class="stack-tag">MagicDNS</span>
+          <span class="stack-tag">Zero config</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── 3. FEATURES ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">Feature Design</div>
+    </div>
+
+    <div class="feature-list">
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#dbeafe;">👤</div>
+        <div class="feature-body">
+          <div class="feature-name">Profile System</div>
+          <div class="feature-desc">Each family member has a named profile with an avatar, color theme, and their own dashboard layout. Profiles are either <strong>Public</strong> (switchable freely) or <strong>Private</strong> (require a numeric PIN to switch to). Private profiles hide their private-marked cards from other profiles. The active profile is stored in a short-lived session cookie so it persists through page refreshes.</div>
+          <span class="feature-note" style="background:#dbeafe;color:#1e40af;">PIN stored as bcrypt hash — never plaintext</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#dcfce7;">⊞</div>
+        <div class="feature-body">
+          <div class="feature-name">Dashboard Grid Engine</div>
+          <div class="feature-desc">Built on <strong>React Grid Layout</strong>, each card can be dragged to any position and resized by its handle. A "maximize" button expands any card to fill the viewport. Clicking outside or pressing Escape returns it to its original position. Layout is saved per profile to the database on every change — no manual save button needed.</div>
+          <span class="feature-note" style="background:#dcfce7;color:#166534;">Separate desktop and mobile layout breakpoints</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#f3e8ff;">🔗</div>
+        <div class="feature-body">
+          <div class="feature-name">External Link Cards (iFrame Embeds)</div>
+          <div class="feature-desc">Any family member can add a card that embeds an external URL via an <code>&lt;iframe&gt;</code>. When a site blocks iFraming (X-Frame-Options), the card gracefully falls back to a stylized link preview with favicon, title, and description fetched via the server-side proxy. Cards can be marked as shared (visible to all profiles) or private to just the creator.</div>
+          <span class="feature-note" style="background:#f3e8ff;color:#6b21a8;">Server proxy fetches oEmbed/Open Graph for preview data</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ffedd5;">📅</div>
+        <div class="feature-body">
+          <div class="feature-name">Google Calendar Integration</div>
+          <div class="feature-desc">The calendar card uses the <strong>Google Calendar API</strong> with OAuth 2.0. The server stores the refresh token securely and fetches events on behalf of the user — keeping API keys entirely off the client. Events from multiple calendars can be merged and color-coded. The card shows a week view inline and expands to a full month view when maximized.</div>
+          <span class="feature-note" style="background:#ffedd5;color:#9a3412;">OAuth tokens stored encrypted in the database</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ccfbf1;">🌤</div>
+        <div class="feature-body">
+          <div class="feature-name">Weather Card</div>
+          <div class="feature-desc">Fetches current conditions and a 7-day forecast from the <strong>OpenWeatherMap API</strong> (free tier). Location can be set per profile. The server caches weather data for 30 minutes to avoid hitting API rate limits. The card shows current conditions in compact view and hourly forecast when expanded.</div>
+          <span class="feature-note" style="background:#ccfbf1;color:#134e4a;">30-min server-side cache — stays within free tier limits</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#fef9c3;">✅</div>
+        <div class="feature-body">
+          <div class="feature-name">Built-in To-Do List</div>
+          <div class="feature-desc">A full-featured task manager with lists, due dates, priorities, and assignees. Tasks can be assigned to specific profiles, making it easy to delegate chores or family responsibilities. Completed tasks are archived rather than deleted. Shared lists are visible across all profiles; personal lists are private by default. Real-time sync via WebSocket means changes show up instantly on other family members' screens.</div>
+          <span class="feature-note" style="background:#fef9c3;color:#713f12;">WebSocket push — no need to refresh for updates</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ffe4e6;">🛒</div>
+        <div class="feature-body">
+          <div class="feature-name">Grocery List</div>
+          <div class="feature-desc">A shared grocery list that any family member can add to. Items are categorized (produce, dairy, pantry, etc.) and can be checked off as you shop. Checked items are sorted to the bottom and cleared with a single "Done Shopping" button. The list supports a simple history so frequently bought items can be re-added quickly. Fully real-time via the same WebSocket channel as to-dos.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#e0e7ff;">🧹</div>
+        <div class="feature-body">
+          <div class="feature-name">Chore Tracker (External Embed)</div>
+          <div class="feature-desc">Since the chore tracker is an existing separate project, it is embedded as an iFrame card. The card passes the active profile name as a URL parameter so the chore tracker can pre-filter to the relevant family member's chores. If the chore tracker is also on the local network, this works seamlessly within the Tailscale tunnel.</div>
+          <span class="feature-note" style="background:#e0e7ff;color:#3730a3;">Profile context passed via URL query params</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── 4. DATABASE SCHEMA ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title">Data Model <span>— SQLite via Drizzle ORM</span></div>
+    </div>
+
+    <div class="schema-grid">
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#dbeafe;color:#1e40af;">👤 profiles</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">name</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">avatar_url</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">color_theme</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">is_private</span><span class="field-type">bool</span></div>
+          <div class="schema-row"><span class="field-name">pin_hash</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">created_at</span><span class="field-type">datetime</span></div>
+        </div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#dcfce7;color:#166534;">⊞ dashboard_layouts</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">profile_id</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">card_id</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">x, y</span><span class="field-type">int</span></div>
+          <div class="schema-row"><span class="field-name">w, h</span><span class="field-type">int</span></div>
+          <div class="schema-row"><span class="field-name">breakpoint</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">is_minimized</span><span class="field-type">bool</span></div>
+        </div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#f3e8ff;color:#6b21a8;">🃏 cards</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">type</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">title</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">config_json</span><span class="field-type">json</span></div>
+          <div class="schema-row"><span class="field-name">owner_id</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">is_shared</span><span class="field-type">bool</span></div>
+          <div class="schema-row"><span class="field-name">is_private</span><span class="field-type">bool</span></div>
+        </div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#fef9c3;color:#713f12;">✅ todo_lists</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">name</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">owner_id</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">is_shared</span><span class="field-type">bool</span></div>
+        </div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#fef9c3;color:#713f12;">📋 todo_items</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">list_id</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">text</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">assigned_to</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">due_date</span><span class="field-type">date</span></div>
+          <div class="schema-row"><span class="field-name">priority</span><span class="field-type">int</span></div>
+          <div class="schema-row"><span class="field-name">completed_at</span><span class="field-type">datetime</span></div>
+        </div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-table-header" style="background:#ffe4e6;color:#9f1239;">🛒 grocery_items</div>
+        <div class="schema-table-body">
+          <div class="schema-row"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-pk">PK</span></div>
+          <div class="schema-row"><span class="field-name">name</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">category</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">quantity</span><span class="field-type">text</span></div>
+          <div class="schema-row"><span class="field-name">added_by</span><span class="field-type">uuid</span><span class="field-fk">FK</span></div>
+          <div class="schema-row"><span class="field-name">is_checked</span><span class="field-type">bool</span></div>
+          <div class="schema-row"><span class="field-name">created_at</span><span class="field-type">datetime</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout callout-green" style="margin-top:20px;">
+      <strong>Why SQLite?</strong> For a family app with under a dozen users and no concurrent write spikes, SQLite in WAL (Write-Ahead Logging) mode handles everything comfortably — including WebSocket updates. The entire database is a single file that can be backed up with a simple <code>cp</code> command or automated to cloud storage with rclone.
+    </div>
+  </div>
+
+  <!-- ─── 5. SECURITY ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">Security Model</div>
+    </div>
+
+    <div class="security-grid">
+
+      <div class="security-card" style="background:#ffe4e6;border-color:#fda4af;">
+        <div class="security-card-title" style="color:#9f1239;">🔒 Tailscale VPN Layer</div>
+        <div class="security-card-body" style="color:#7f1d1d;">The app is never exposed to the public internet. Tailscale creates a private WireGuard mesh — only devices enrolled in your Tailnet can even reach the server. This replaces the need for public-facing auth entirely and makes the app safe to run without HTTPS (though we still recommend it).</div>
+      </div>
+
+      <div class="security-card" style="background:#dbeafe;border-color:#93c5fd;">
+        <div class="security-card-title" style="color:#1e40af;">🔑 PIN-based Profile Switching</div>
+        <div class="security-card-body" style="color:#1e3a8a;">Private profiles require a 4–6 digit PIN to switch to. PINs are stored as bcrypt hashes (cost factor 12). A failed PIN increments a rate-limit counter — after 5 failures, switching is blocked for 5 minutes. This prevents brute-force guessing by a family member.</div>
+      </div>
+
+      <div class="security-card" style="background:#dcfce7;border-color:#86efac;">
+        <div class="security-card-title" style="color:#166534;">🗝️ API Secrets Stay Server-Side</div>
+        <div class="security-card-body" style="color:#14532d;">Google OAuth tokens, OpenWeatherMap API keys, and any other third-party credentials are stored only in the server's environment and encrypted in the database. The browser never receives these values — all external API calls are proxied through the Fastify backend.</div>
+      </div>
+
+      <div class="security-card" style="background:#f3e8ff;border-color:#d8b4fe;">
+        <div class="security-card-title" style="color:#6b21a8;">🛡️ Content Privacy</div>
+        <div class="security-card-body" style="color:#581c87;">Cards and list data marked as private are filtered server-side before being sent to the client — they never appear in any API response unless the requesting session matches the owning profile. This isn't just UI-level hiding; private content is excluded at the query layer.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── 6. RESPONSIVE DESIGN ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div class="section-title">Responsive Design Strategy</div>
+    </div>
+
+    <p>Supporting desktop, tablet, and mobile is not just a CSS concern — it changes how the dashboard grid behaves, how cards are controlled, and what the navigation pattern looks like at each size. React Grid Layout's built-in breakpoint system handles most of the heavy lifting, but there are several important design decisions per device class.</p>
+
+    <div class="feature-list" style="margin-top:20px;">
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#dbeafe;font-size:22px;">🖥</div>
+        <div class="feature-body">
+          <div class="feature-name">Desktop (lg / xl — ≥996px)</div>
+          <div class="feature-desc">Full drag-and-drop grid. Cards can be freely positioned anywhere on a 12-column grid, resized by dragging a corner handle, and maximized to fill the viewport. Profile switcher lives in a persistent left sidebar. Card controls are always visible in the card header. This is the primary layout experience — everything else is an adaptive simplification of it.</div>
+          <span class="feature-note" style="background:#dbeafe;color:#1e40af;">12-column grid · drag + resize enabled</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#f3e8ff;font-size:22px;">⬛</div>
+        <div class="feature-body">
+          <div class="feature-name">Tablet (md / sm — 480px–995px)</div>
+          <div class="feature-desc">Switches to a 6-column grid. Drag-and-drop remains enabled. The sidebar collapses to a top navigation bar with a profile avatar button. Card controls condense — resize handles remain, but the settings and hide buttons move into a tap-friendly overflow menu (three-dot) per card. Landscape tablet gets close to the desktop experience; portrait tablet gets the condensed layout.</div>
+          <span class="feature-note" style="background:#f3e8ff;color:#6b21a8;">6-column grid · drag retained · condensed controls</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ffedd5;font-size:22px;">📱</div>
+        <div class="feature-body">
+          <div class="feature-name">Mobile (xs — &lt;480px)</div>
+          <div class="feature-desc">Cards stack in a single full-width column. Drag-and-drop is replaced by a dedicated <strong>"Edit Layout"</strong> mode where cards can be long-pressed and reordered via up/down handles — this is far more reliable on touch than free-form dragging. Card controls are accessible via a bottom sheet that slides up on tap. The profile switcher becomes a bottom navigation bar with avatar chips. All tap targets are minimum 44×44px per Apple/Google guidelines.</div>
+          <span class="feature-note" style="background:#ffedd5;color:#9a3412;">1-column stacked · reorder mode instead of drag · bottom nav</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#dcfce7;font-size:22px;">📲</div>
+        <div class="feature-body">
+          <div class="feature-name">PWA — Add to Home Screen</div>
+          <div class="feature-desc">The app ships with a full PWA manifest and service worker, so family members can install it to their phone or tablet home screen and launch it in standalone mode (no browser chrome). On iOS this uses the "Add to Home Screen" flow; on Android it triggers the native install prompt. Offline support is limited to showing the last cached layout — live data requires connectivity.</div>
+          <span class="feature-note" style="background:#dcfce7;color:#166534;">Standalone mode · app icon · splash screen per profile color</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ffe4e6;font-size:22px;">🖼</div>
+        <div class="feature-body">
+          <div class="feature-name">iFrame Cards on Mobile</div>
+          <div class="feature-desc">iFrame embeds are particularly tricky on mobile — many sites are not mobile-optimized when embedded, and touch scroll is intercepted by the iframe. The card shell detects touch devices and adds <code>pointer-events: none</code> to iFrames in compact mode, with a tap-to-activate overlay that hands control to the iframe once the user deliberately taps in. Maximized iFrames get full touch passthrough.</div>
+          <span class="feature-note" style="background:#ffe4e6;color:#9f1239;">Tap-to-activate prevents accidental iframe scroll capture</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout callout-blue" style="margin-top:20px;">
+      <strong>Layout Storage:</strong> Each profile stores a separate layout object per breakpoint — mobile, tablet, and desktop layouts are independent. Rearranging cards on your phone doesn't disturb your desktop layout.
+    </div>
+  </div>
+
+  <!-- ─── 7. KUBERNETES / HELM DEPLOYMENT ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <div class="section-title">Kubernetes / Helm Deployment</div>
+    </div>
+
+    <p>The application is packaged as a Helm chart targeting a <strong>k3s</strong> cluster. k3s is a certified Kubernetes distribution purpose-built for resource-constrained environments — it runs comfortably on a Raspberry Pi 4, an old Mac Mini, a NAS, or any always-on home server. A full install takes under a minute.</p>
+
+    <div class="callout callout-orange">
+      <strong>Important SQLite constraint:</strong> Because SQLite uses a single file with exclusive write locks, the <code>app</code> Deployment must run with <code>replicas: 1</code>. The static frontend pod (nginx serving the React build) can scale freely. If horizontal scaling of the backend ever becomes necessary, a migration to PostgreSQL is straightforward with Drizzle's migration system — the schema stays the same.
+    </div>
+
+    <div style="margin-top:24px;">
+      <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Helm Chart Structure</div>
+      <div style="background:#0f172a;border-radius:12px;padding:20px 24px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:#e2e8f0;line-height:1.8;overflow-x:auto;">
+        <span style="color:#94a3b8;">family-dashboard/           # Helm chart root</span><br>
+        ├── <span style="color:#86efac;">Chart.yaml</span><br>
+        ├── <span style="color:#86efac;">values.yaml</span>             <span style="color:#64748b;"># storageClass, domain, image tags, replicas</span><br>
+        └── templates/<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#93c5fd;">deployment-app.yaml</span>     <span style="color:#64748b;"># Node.js/Fastify · replicas: 1</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#93c5fd;">deployment-static.yaml</span>  <span style="color:#64748b;"># nginx static · replicas: 2</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#fde68a;">service-app.yaml</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#fde68a;">service-static.yaml</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#fda4af;">ingress.yaml</span>            <span style="color:#64748b;"># Traefik IngressRoute + TLS</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#d8b4fe;">pvc.yaml</span>               <span style="color:#64748b;"># ReadWriteOnce · SQLite data volume</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#d8b4fe;">configmap.yaml</span>         <span style="color:#64748b;"># App config, feature flags</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#fda4af;">secret.yaml</span>            <span style="color:#64748b;"># Google OAuth, Weather API key</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:#5eead4;">cronjob-backup.yaml</span>    <span style="color:#64748b;"># Nightly SQLite → host path backup</span>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Key values.yaml Parameters</div>
+      <div style="background:#0f172a;border-radius:12px;padding:20px 24px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:#e2e8f0;line-height:1.8;overflow-x:auto;">
+        <span style="color:#86efac;">app</span>:<br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">image</span>: <span style="color:#fde68a;">family-dashboard/app:latest</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">replicas</span>: <span style="color:#fda4af;">1</span>  <span style="color:#64748b;"># SQLite — must stay 1</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">port</span>: <span style="color:#fda4af;">3001</span><br>
+        <span style="color:#86efac;">static</span>:<br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">image</span>: <span style="color:#fde68a;">family-dashboard/static:latest</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">replicas</span>: <span style="color:#fda4af;">2</span><br>
+        <span style="color:#86efac;">ingress</span>:<br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">host</span>: <span style="color:#fde68a;">dashboard.home.ts.net</span>  <span style="color:#64748b;"># Tailscale MagicDNS hostname</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">tls</span>: <span style="color:#fda4af;">true</span><br>
+        <span style="color:#86efac;">persistence</span>:<br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">storageClass</span>: <span style="color:#fde68a;">local-path</span>  <span style="color:#64748b;"># k3s built-in local-path provisioner</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">size</span>: <span style="color:#fde68a;">2Gi</span><br>
+        <span style="color:#86efac;">backup</span>:<br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">schedule</span>: <span style="color:#fde68a;">"0 2 * * *"</span>  <span style="color:#64748b;"># 2am nightly</span><br>
+        &nbsp;&nbsp;<span style="color:#93c5fd;">hostPath</span>: <span style="color:#fde68a;">/mnt/backups/family-dashboard</span>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Tailscale Kubernetes Operator</div>
+      <p>Rather than exposing a NodePort or configuring a LoadBalancer, we use the <strong>Tailscale Kubernetes Operator</strong>. This runs as a pod inside the cluster and registers the service directly onto your Tailnet — no port forwarding, no firewall rules. Family members access the dashboard at a stable MagicDNS address like <code>dashboard.home.ts.net</code>, which resolves correctly whether they're on the home network or remote via Tailscale.</p>
+    </div>
+
+    <div class="callout callout-green" style="margin-top:20px;">
+      <strong>Deploy command:</strong> <code>helm upgrade --install family-dashboard ./family-dashboard -f values.yaml -n family --create-namespace</code> — a single command installs or updates the entire application.
+    </div>
+  </div>
+
+  <!-- ─── 8. IMPLEMENTATION PHASES ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">8</div>
+      <div class="section-title">Suggested Implementation Phases</div>
+    </div>
+
+    <div class="phases">
+
+      <div class="phase">
+        <div class="phase-num" style="background:#dbeafe;color:#1e40af;">1</div>
+        <div class="phase-body">
+          <div class="phase-title">Foundation <span class="phase-duration">~2 weeks</span></div>
+          <div style="font-size:13px;color:#475569;margin-bottom:8px;">Core infrastructure, profiles, and an empty dashboard grid.</div>
+          <div class="phase-items">
+            <span class="phase-item">Project scaffolding (Vite + React + TS)</span>
+            <span class="phase-item">Fastify API server</span>
+            <span class="phase-item">SQLite + Drizzle schema</span>
+            <span class="phase-item">Profile creation & switching</span>
+            <span class="phase-item">PIN system</span>
+            <span class="phase-item">React Grid Layout integration</span>
+            <span class="phase-item">k3s cluster setup</span>
+            <span class="phase-item">Helm chart scaffolding</span>
+            <span class="phase-item">Tailscale K8s Operator</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num" style="background:#dcfce7;color:#166534;">2</div>
+        <div class="phase-body">
+          <div class="phase-title">Internal Apps <span class="phase-duration">~2 weeks</span></div>
+          <div style="font-size:13px;color:#475569;margin-bottom:8px;">Build the grocery list, to-do list, and real-time sync.</div>
+          <div class="phase-items">
+            <span class="phase-item">Grocery list UI + API</span>
+            <span class="phase-item">To-do list with assignees</span>
+            <span class="phase-item">WebSocket server (real-time sync)</span>
+            <span class="phase-item">Card add/remove/configure UI</span>
+            <span class="phase-item">Privacy controls per card</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num" style="background:#f3e8ff;color:#6b21a8;">3</div>
+        <div class="phase-body">
+          <div class="phase-title">External Integrations <span class="phase-duration">~2 weeks</span></div>
+          <div style="font-size:13px;color:#475569;margin-bottom:8px;">Google Calendar, weather, iframe embeds, and link previews.</div>
+          <div class="phase-items">
+            <span class="phase-item">Google Calendar OAuth flow</span>
+            <span class="phase-item">Calendar card UI</span>
+            <span class="phase-item">OpenWeatherMap integration</span>
+            <span class="phase-item">Weather card UI</span>
+            <span class="phase-item">Generic iframe card</span>
+            <span class="phase-item">Open Graph preview fallback</span>
+            <span class="phase-item">Chore tracker embed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num" style="background:#ffedd5;color:#9a3412;">4</div>
+        <div class="phase-body">
+          <div class="phase-title">Polish, Mobile &amp; Ops <span class="phase-duration">~2 weeks</span></div>
+          <div style="font-size:13px;color:#475569;margin-bottom:8px;">Responsive refinement, PWA, animations, and Helm chart hardening.</div>
+          <div class="phase-items">
+            <span class="phase-item">Mobile reorder-mode UI</span>
+            <span class="phase-item">Tablet condensed controls</span>
+            <span class="phase-item">Bottom sheet card controls</span>
+            <span class="phase-item">Bottom nav profile switcher</span>
+            <span class="phase-item">Card animations (Framer Motion)</span>
+            <span class="phase-item">PWA manifest + service worker</span>
+            <span class="phase-item">Helm CronJob backup</span>
+            <span class="phase-item">Admin panel for family settings</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout callout-orange" style="margin-top:20px;">
+      <strong>Total estimated timeline: ~8 weeks</strong> for a fully functional v1.0. Phases 1–2 deliver a working, useful app. Phase 3 adds external integrations. Phase 4 brings full cross-device polish and Helm/k3s production hardening.
+    </div>
+  </div>
+
+  <!-- ─── 9. CARD ANATOMY ─── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">9</div>
+      <div class="section-title">Card Component Design</div>
+    </div>
+
+    <p>Every card — whether internal or external — shares the same shell component, ensuring a consistent look and set of controls across the dashboard.</p>
+
+    <div style="border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-top:20px;background:var(--surface);">
+      <!-- Card header -->
+      <div style="padding:12px 16px;background:#f8fafc;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px;">📅</div>
+          <span style="font-weight:700;font-size:14px;color:var(--text);">Google Calendar</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:white;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;" title="Settings">⚙️</button>
+          <button style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:white;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;" title="Maximize">⛶</button>
+          <button style="width:28px;height:28px;border-radius:6px;border:1px solid #fda4af;background:#ffe4e6;cursor:pointer;font-size:13px;color:#9f1239;display:flex;align-items:center;justify-content:center;" title="Hide">✕</button>
+        </div>
+      </div>
+      <!-- Card body placeholder -->
+      <div style="padding:20px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 10px,#f1f5f9 10px,#f1f5f9 20px);">
+        Card content renders here
+      </div>
+      <!-- Card resize handle -->
+      <div style="padding:4px 8px;background:#f8fafc;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
+        <span style="font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:0.05em;">⠿ drag to resize</span>
+      </div>
+    </div>
+
+    <p style="margin-top:16px;">The card header provides: an icon + title, a settings button (opens a slide-out panel to configure the card), a maximize button (full-screen overlay), and a hide button (removes from view without deleting — re-add from the card library). The resize handle in the footer is the React Grid Layout drag target. The entire header is also a drag handle for repositioning.</p>
+
+  </div>
+
+</div>
+
+<!-- ─── FOOTER ─── -->
+<div class="footer">
+  <strong>Family Dashboard — Design Proposal</strong> · Prepared May 2026 · Confidential
+</div>
+
+</body>
+</html>
