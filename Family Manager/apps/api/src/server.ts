@@ -3,18 +3,25 @@ import cors from '@fastify/cors'
 import cookie from '@fastify/cookie'
 import jwt from '@fastify/jwt'
 import websocket from '@fastify/websocket'
+import { migrate } from 'drizzle-orm/libsql/migrator'
+import { db } from './db/client.js'
+import { profileRoutes } from './routes/profiles.js'
 
 export async function buildServer() {
   const server = Fastify({
     logger: {
       level: process.env.LOG_LEVEL ?? 'info',
-      ...(process.env.NODE_ENV === 'development' && {
-        transport: { target: 'pino-pretty' },
-      }),
+      ...(process.env.NODE_ENV === 'development'
+        ? { transport: { target: 'pino-pretty' } }
+        : {}),
     },
   })
 
-  // ── Plugins ──────────────────────────────────────────────────────────────
+  // ── Run migrations on startup ─────────────────────────────────────────────
+  await migrate(db, { migrationsFolder: './src/db/migrations' })
+  server.log.info('Database migrations applied')
+
+  // ── Plugins ───────────────────────────────────────────────────────────────
 
   await server.register(cors, {
     origin: process.env.WEB_ORIGIN ?? 'http://localhost:5173',
@@ -25,7 +32,10 @@ export async function buildServer() {
 
   await server.register(jwt, {
     secret: process.env.JWT_SECRET ?? 'dev-secret-change-in-production',
-    cookie: { cookieName: 'session', signed: false },
+    cookie: {
+      cookieName: 'session',
+      signed: false,
+    },
   })
 
   await server.register(websocket)
@@ -34,7 +44,8 @@ export async function buildServer() {
 
   server.get('/health', async () => ({ status: 'ok', ts: Date.now() }))
 
-  // TODO Phase 1: Register profile routes
+  await server.register(profileRoutes, { prefix: '/api' })
+
   // TODO Phase 1: Register layout routes
   // TODO Phase 2: Register todo routes
   // TODO Phase 2: Register grocery routes

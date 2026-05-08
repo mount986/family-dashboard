@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
 // ── Profiles ──────────────────────────────────────────────────────────────────
 
@@ -11,7 +11,7 @@ export const profiles = sqliteTable('profiles', {
   pinHash: text('pin_hash'),
   pinFailures: integer('pin_failures').notNull().default(0),
   pinLockedUntil: integer('pin_locked_until'), // unix timestamp ms
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at').notNull(), // unix timestamp ms
 })
 
 // ── Cards ─────────────────────────────────────────────────────────────────────
@@ -26,7 +26,7 @@ export const cards = sqliteTable('cards', {
     .references(() => profiles.id, { onDelete: 'cascade' }),
   isShared: integer('is_shared', { mode: 'boolean' }).notNull().default(true),
   isPrivate: integer('is_private', { mode: 'boolean' }).notNull().default(false),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at').notNull(),
 })
 
 // ── Dashboard layouts ─────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@ export const todoLists = sqliteTable('todo_lists', {
     .notNull()
     .references(() => profiles.id, { onDelete: 'cascade' }),
   isShared: integer('is_shared', { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at').notNull(),
 })
 
 export const todoItems = sqliteTable('todo_items', {
@@ -68,8 +68,8 @@ export const todoItems = sqliteTable('todo_items', {
   assignedTo: text('assigned_to').references(() => profiles.id, { onDelete: 'set null' }),
   dueDate: text('due_date'), // ISO date string
   priority: integer('priority').notNull().default(2), // 1=high 2=med 3=low
-  completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  completedAt: integer('completed_at'),
+  createdAt: integer('created_at').notNull(),
 })
 
 // ── Grocery list ──────────────────────────────────────────────────────────────
@@ -83,5 +83,5 @@ export const groceryItems = sqliteTable('grocery_items', {
     .notNull()
     .references(() => profiles.id, { onDelete: 'cascade' }),
   isChecked: integer('is_checked', { mode: 'boolean' }).notNull().default(false),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at').notNull(),
 })

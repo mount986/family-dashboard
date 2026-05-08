@@ -1,19 +1,18 @@
-import Database from 'better-sqlite3'
-import { drizzle } from 'drizzle-orm/better-sqlite3'
+import { createClient } from '@libsql/client'
+import { drizzle } from 'drizzle-orm/libsql'
 import { mkdirSync } from 'fs'
-import { dirname } from 'path'
+import { dirname, resolve } from 'path'
 import * as schema from './schema.js'
 
 const dbPath = process.env.DATABASE_URL ?? './data/family-dashboard.db'
 
-// Ensure the data directory exists
-mkdirSync(dirname(dbPath), { recursive: true })
+// Ensure the data directory exists (libsql uses a file:// URL for local SQLite)
+const resolvedPath = resolve(dbPath)
+mkdirSync(dirname(resolvedPath), { recursive: true })
 
-const sqlite = new Database(dbPath)
+const client = createClient({
+  url: `file:${resolvedPath}`,
+})
 
-// Enable WAL mode for better concurrent read performance
-sqlite.pragma('journal_mode = WAL')
-sqlite.pragma('foreign_keys = ON')
-
-export const db = drizzle(sqlite, { schema })
+export const db = drizzle(client, { schema })
 export type DB = typeof db

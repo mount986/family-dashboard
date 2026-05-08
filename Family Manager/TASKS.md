@@ -19,15 +19,15 @@
 - [x] 🔴 Define `profiles` table schema
 - [x] 🔴 Define `cards` table schema
 - [x] 🔴 Define `dashboard_layouts` table schema
-- [ ] 🟡 Write initial Drizzle migration and verify it runs cleanly
+- [x] 🟡 Write initial Drizzle migration and verify it runs cleanly
 - [x] 🟡 Enable WAL mode on SQLite
 
 ### Profile System
-- [ ] 🔴 Build profile creation API (`POST /profiles`)
-- [ ] 🔴 Build profile list API (`GET /profiles`)
-- [ ] 🔴 Implement PIN hashing with bcrypt (cost factor 12)
-- [ ] 🔴 Implement PIN verification endpoint with rate limiting (5 attempts → 5 min lockout)
-- [ ] 🔴 Implement session cookie (short-lived JWT) for active profile
+- [x] 🔴 Build profile creation API (`POST /profiles`)
+- [x] 🔴 Build profile list API (`GET /profiles`)
+- [x] 🔴 Implement PIN hashing with bcrypt (cost factor 12)
+- [x] 🔴 Implement PIN verification endpoint with rate limiting (5 attempts → 5 min lockout)
+- [x] 🔴 Implement session cookie (short-lived JWT) for active profile
 - [ ] 🔴 Build profile switcher UI — public profiles (free switch)
 - [ ] 🔴 Build PIN entry modal for private profile switching
 - [ ] 🟡 Build profile creation/edit UI (name, avatar, color theme, public/private toggle)
