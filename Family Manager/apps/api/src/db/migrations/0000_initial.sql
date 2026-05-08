@@ -3,7 +3,7 @@ CREATE TABLE `profiles` (
   `name` text NOT NULL,
   `avatar_url` text,
   `color_theme` text NOT NULL DEFAULT '#6366f1',
-  `is_private` integer NOT NULL DEFAULT false,
+  `is_admin` integer NOT NULL DEFAULT false,
   `pin_hash` text,
   `pin_failures` integer NOT NULL DEFAULT 0,
   `pin_locked_until` integer,
@@ -17,7 +17,7 @@ CREATE TABLE `cards` (
   `config_json` text NOT NULL DEFAULT '{}',
   `owner_id` text NOT NULL REFERENCES `profiles`(`id`) ON DELETE CASCADE,
   `is_shared` integer NOT NULL DEFAULT true,
-  `is_private` integer NOT NULL DEFAULT false,
+  `is_admin` integer NOT NULL DEFAULT false,
   `created_at` integer NOT NULL
 );
 

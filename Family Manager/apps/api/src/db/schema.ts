@@ -7,7 +7,7 @@ export const profiles = sqliteTable('profiles', {
   name: text('name').notNull(),
   avatarUrl: text('avatar_url'),
   colorTheme: text('color_theme').notNull().default('#6366f1'),
-  isPrivate: integer('is_private', { mode: 'boolean' }).notNull().default(false),
+  isAdmin: integer('is_admin', { mode: 'boolean' }).notNull().default(false),
   pinHash: text('pin_hash'),
   pinFailures: integer('pin_failures').notNull().default(0),
   pinLockedUntil: integer('pin_locked_until'), // unix timestamp ms
@@ -25,7 +25,7 @@ export const cards = sqliteTable('cards', {
     .notNull()
     .references(() => profiles.id, { onDelete: 'cascade' }),
   isShared: integer('is_shared', { mode: 'boolean' }).notNull().default(true),
-  isPrivate: integer('is_private', { mode: 'boolean' }).notNull().default(false),
+  isAdmin: integer('is_admin', { mode: 'boolean' }).notNull().default(false),
   createdAt: integer('created_at').notNull(),
 })
 

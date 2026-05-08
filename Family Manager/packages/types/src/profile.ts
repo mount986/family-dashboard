@@ -3,7 +3,8 @@ export interface Profile {
   name: string
   avatarUrl: string | null
   colorTheme: string
-  isPrivate: boolean
+  /** Admin profiles require a PIN to switch to and can manage all profiles */
+  isAdmin: boolean
   createdAt: string
 }
 
@@ -13,14 +14,14 @@ export interface ProfileSummary {
   name: string
   avatarUrl: string | null
   colorTheme: string
-  isPrivate: boolean
+  isAdmin: boolean
 }
 
 export interface CreateProfileInput {
   name: string
   avatarUrl?: string
   colorTheme?: string
-  isPrivate?: boolean
+  isAdmin?: boolean
   pin?: string
 }
 
@@ -28,7 +29,7 @@ export interface UpdateProfileInput {
   name?: string
   avatarUrl?: string | null
   colorTheme?: string
-  isPrivate?: boolean
+  isAdmin?: boolean
 }
 
 export interface SwitchProfileInput {
@@ -39,5 +40,5 @@ export interface SwitchProfileInput {
 export interface ActiveSession {
   profileId: string
   profileName: string
-  isPrivate: boolean
+  isAdmin: boolean
 }

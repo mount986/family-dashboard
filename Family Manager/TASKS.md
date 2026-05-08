@@ -28,9 +28,9 @@
 - [x] 🔴 Implement PIN hashing with bcrypt (cost factor 12)
 - [x] 🔴 Implement PIN verification endpoint with rate limiting (5 attempts → 5 min lockout)
 - [x] 🔴 Implement session cookie (short-lived JWT) for active profile
-- [ ] 🔴 Build profile switcher UI — public profiles (free switch)
-- [ ] 🔴 Build PIN entry modal for private profile switching
-- [ ] 🟡 Build profile creation/edit UI (name, avatar, color theme, public/private toggle)
+- [x] 🔴 Build profile switcher UI — public profiles (free switch)
+- [x] 🔴 Build PIN entry modal for private profile switching
+- [x] 🟡 Build profile creation/edit UI (name, avatar, color theme, public/private toggle)
 
 ### Dashboard Grid
 - [ ] 🔴 Install and configure `react-grid-layout`

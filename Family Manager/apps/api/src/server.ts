@@ -6,6 +6,7 @@ import websocket from '@fastify/websocket'
 import { migrate } from 'drizzle-orm/libsql/migrator'
 import { db } from './db/client.js'
 import { profileRoutes } from './routes/profiles.js'
+import { bootstrapRoutes } from './routes/bootstrap.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -44,6 +45,7 @@ export async function buildServer() {
 
   server.get('/health', async () => ({ status: 'ok', ts: Date.now() }))
 
+  await server.register(bootstrapRoutes, { prefix: '/api' })
   await server.register(profileRoutes, { prefix: '/api' })
 
   // TODO Phase 1: Register layout routes
