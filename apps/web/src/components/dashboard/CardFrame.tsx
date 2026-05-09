@@ -1,67 +1,101 @@
 import type { Card } from '@family-dashboard/types'
 
-// ── Labels + colours per card type ───────────────────────────────────────────
+// ── Icon metadata per card type ───────────────────────────────────────────────
 
-const TYPE_LABELS: Record<Card['type'], string> = {
-  'todo':          'To-do',
-  'grocery':       'Grocery',
-  'calendar':      'Calendar',
-  'weather':       'Weather',
-  'iframe':        'Embed',
-  'chore-tracker': 'Chores',
+const TYPE_ICON: Record<Card['type'], { emoji: string; bg: string; color: string }> = {
+  'todo':          { emoji: '✅', bg: '#fef9c3', color: '#713f12' },
+  'grocery':       { emoji: '🛒', bg: '#ffe4e6', color: '#9f1239' },
+  'calendar':      { emoji: '📅', bg: '#ffedd5', color: '#9a3412' },
+  'weather':       { emoji: '🌤', bg: '#ccfbf1', color: '#134e4a' },
+  'iframe':        { emoji: '🔗', bg: '#f3e8ff', color: '#6b21a8' },
+  'chore-tracker': { emoji: '🧹', bg: '#e0e7ff', color: '#3730a3' },
 }
 
-const TYPE_PILL: Record<Card['type'], string> = {
-  'todo':          'bg-indigo-500/20 text-indigo-300',
-  'grocery':       'bg-emerald-500/20 text-emerald-300',
-  'calendar':      'bg-blue-500/20 text-blue-300',
-  'weather':       'bg-sky-500/20 text-sky-300',
-  'iframe':        'bg-violet-500/20 text-violet-300',
-  'chore-tracker': 'bg-amber-500/20 text-amber-300',
-}
+// ── Props ─────────────────────────────────────────────────────────────────────
 
 interface CardFrameProps {
   card: Card
   editMode: boolean
+  onMaximize: () => void
+  onSettings: () => void
+  onHide: () => void
 }
 
-export function CardFrame({ card, editMode }: CardFrameProps) {
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function CardFrame({ card, editMode, onMaximize, onSettings, onHide }: CardFrameProps) {
+  const icon = TYPE_ICON[card.type]
+
   return (
     <div
       className={[
         'h-full flex flex-col bg-slate-900 rounded-xl border overflow-hidden select-none',
         editMode
-          ? 'border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+          ? 'border-indigo-500/40 shadow-lg shadow-indigo-500/10'
           : 'border-slate-800',
       ].join(' ')}
     >
-      {/* ── Header ── drag-handle class is required by DashboardGrid's draggableHandle */}
+      {/* ── Header ── */}
       <div
         className={[
           'flex items-center gap-2 px-3 py-2 border-b border-slate-800 flex-shrink-0',
           editMode ? 'drag-handle cursor-grab active:cursor-grabbing' : '',
         ].join(' ')}
       >
+        {/* Icon square */}
         <span
-          className={[
-            'text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide flex-shrink-0',
-            TYPE_PILL[card.type],
-          ].join(' ')}
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+          style={{ backgroundColor: icon.bg, color: icon.color }}
         >
-          {TYPE_LABELS[card.type]}
+          {icon.emoji}
         </span>
-        <span className="text-white text-sm font-medium flex-1 min-w-0 truncate">
+
+        {/* Title */}
+        <span className="text-sm font-semibold flex-1 min-w-0 truncate text-slate-100">
           {card.title}
         </span>
-        {editMode && (
-          <span className="text-slate-500 text-xs flex-shrink-0 pointer-events-none">⠿</span>
+
+        {/* Controls — hidden in editMode so they don't intercept drag events */}
+        {!editMode && (
+          <>
+            <button
+              onClick={onSettings}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+              aria-label="Settings"
+            >
+              ⚙
+            </button>
+            <button
+              onClick={onMaximize}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+              aria-label="Maximize"
+            >
+              ⛶
+            </button>
+            <button
+              onClick={onHide}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20"
+              aria-label="Hide"
+            >
+              ✕
+            </button>
+          </>
         )}
       </div>
 
-      {/* ── Body — content wired up per-type in Phase 2 ── */}
-      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-        <p className="text-slate-600 text-xs">Content coming soon</p>
+      {/* ── Body ── */}
+      <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 flex items-center justify-center h-full">
+          <p className="text-slate-600 text-xs">Content coming in Phase 2</p>
+        </div>
       </div>
+
+      {/* ── Footer (edit mode only) ── */}
+      {editMode && (
+        <div className="flex justify-end px-3 py-1 border-t border-slate-800 flex-shrink-0">
+          <span className="text-slate-600 text-[10px]">⠿ drag to resize</span>
+        </div>
+      )}
     </div>
   )
 }

@@ -39,6 +39,21 @@ export async function getLayouts(profileId: string): Promise<DashboardLayout> {
 // ── Mutations ─────────────────────────────────────────────────────────────────
 
 /**
+ * Removes all layout entries for a card across every breakpoint for a profile.
+ * This is the "hide card" action — the card remains in the cards table.
+ */
+export async function hideCard(profileId: string, cardId: string): Promise<void> {
+  await db
+    .delete(dashboardLayouts)
+    .where(
+      and(
+        eq(dashboardLayouts.profileId, profileId),
+        eq(dashboardLayouts.cardId, cardId)
+      )
+    )
+}
+
+/**
  * Atomically replaces all layout rows for a given profile + breakpoint.
  * Passing an empty array clears the layout for that breakpoint.
  */

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E '\\\\.\\(ts|tsx|js|jsx|json|sql|md\\)$')",
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm run *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
