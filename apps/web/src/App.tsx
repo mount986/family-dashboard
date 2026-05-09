@@ -6,9 +6,11 @@ import { BootstrapScreen } from '@/components/bootstrap/BootstrapScreen'
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid'
 import { useSession } from '@/api/profiles'
 import { useSessionStore } from '@/store/session'
+import { useRealtimeSync } from '@/api/websocket'
 import { api } from '@/api/client'
 
 export default function App() {
+  useRealtimeSync()
   const [manageOpen, setManageOpen] = useState(false)
   const { data: serverSession } = useSession()
   const session = useSessionStore((s) => s.session) ?? serverSession
