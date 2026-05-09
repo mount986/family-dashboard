@@ -30,6 +30,25 @@ export const layoutRoutes: FastifyPluginAsync = async (server) => {
     }
   )
 
+  // ── DELETE /api/layouts/cards/:cardId — hide a card (all breakpoints) ────
+  server.delete<{ Params: { cardId: string } }>(
+    '/layouts/cards/:cardId',
+    {
+      preHandler: requireSession,
+      schema: {
+        params: {
+          type: 'object',
+          required: ['cardId'],
+          properties: { cardId: { type: 'string' } },
+        },
+      },
+    },
+    async (request, reply) => {
+      await layoutService.hideCard(request.user.profileId, request.params.cardId)
+      return reply.code(204).send()
+    }
+  )
+
   // ── PUT /api/layouts/:breakpoint — save one breakpoint's layout ──────────
   // Replaces all layout rows for (profileId, breakpoint) atomically.
   server.put<{
