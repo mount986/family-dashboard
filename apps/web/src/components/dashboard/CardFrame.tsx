@@ -1,12 +1,14 @@
 import type { Card } from '@family-dashboard/types'
 import { TodoCard } from '@/components/cards/TodoCard'
 import { GroceryCard } from '@/components/cards/GroceryCard'
+import { IframeCard } from '@/components/cards/IframeCard'
 
 // ── Card body registry ────────────────────────────────────────────────────────
 
 function CardBody({ card }: { card: Card }) {
   if (card.type === 'todo') return <TodoCard card={card} />
   if (card.type === 'grocery') return <GroceryCard />
+  if (card.type === 'iframe' || card.type === 'chore-tracker') return <IframeCard card={card} />
   return (
     <div className="flex items-center justify-center h-full">
       <p className="text-slate-600 text-xs">{card.type} — coming soon</p>

@@ -88,10 +88,10 @@
 - [x] 🟢 Add item quantity field
 
 ### Real-Time Sync
-- [ ] 🔴 Set up WebSocket server in Fastify (`@fastify/websocket`)
-- [ ] 🔴 Broadcast to-do item changes to all connected clients
-- [ ] 🔴 Broadcast grocery list changes to all connected clients
-- [ ] 🟡 Handle reconnection gracefully on the client (exponential backoff)
+- [x] 🔴 Set up WebSocket server in Fastify (`@fastify/websocket`)
+- [x] 🔴 Broadcast to-do item changes to all connected clients
+- [x] 🔴 Broadcast grocery list changes to all connected clients
+- [x] 🟡 Handle reconnection gracefully on the client (exponential backoff)
 - [ ] 🟢 Show "X is editing…" presence indicator on shared lists
 
 ---
@@ -117,11 +117,11 @@
 - [ ] 🟢 Add hourly forecast in expanded view
 
 ### iFrame / Embed Cards
-- [ ] 🔴 Build generic iframe card component
+- [x] 🔴 Build generic iframe card component
 - [ ] 🔴 Implement Open Graph / oEmbed server-side proxy for link previews
 - [ ] 🔴 Graceful fallback to link preview when `X-Frame-Options` blocks embed
 - [ ] 🔴 Embed chore tracker with active profile passed as URL query param
-- [ ] 🟡 Build "Add external card" UI (URL input + preview before saving)
+- [x] 🟡 Build "Add external card" UI (URL input in settings panel)
 - [ ] 🟡 Implement tap-to-activate overlay for iframes on touch devices
 
 ---
