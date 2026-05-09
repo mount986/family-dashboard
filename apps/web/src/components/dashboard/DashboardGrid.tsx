@@ -238,6 +238,7 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
           margin={[12, 12]}
           containerPadding={[16, 16]}
           draggableHandle=".drag-handle"
+          draggableCancel=".drag-cancel"
         >
           {visibleCards.map((card) => (
             <div key={card.id} className="overflow-hidden">

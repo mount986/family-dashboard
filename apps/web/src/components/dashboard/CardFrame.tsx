@@ -69,26 +69,30 @@ export function CardFrame({ card, editMode, onMaximize, onSettings, onHide }: Ca
           {card.title}
         </span>
 
-        {/* Controls — hidden in editMode so they don't intercept drag events */}
+        {/* Maximize — only in view mode */}
         {!editMode && (
+          <button
+            onClick={onMaximize}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+            aria-label="Maximize"
+          >
+            ⛶
+          </button>
+        )}
+
+        {/* Settings + Hide — only in edit mode */}
+        {editMode && (
           <>
             <button
               onClick={onSettings}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+              className="drag-cancel w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
               aria-label="Settings"
             >
               ⚙
             </button>
             <button
-              onClick={onMaximize}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-700"
-              aria-label="Maximize"
-            >
-              ⛶
-            </button>
-            <button
               onClick={onHide}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20"
+              className="drag-cancel w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20"
               aria-label="Hide"
             >
               ✕
