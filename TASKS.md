@@ -31,6 +31,7 @@
 - [x] 🔴 Build profile switcher UI — public profiles (free switch)
 - [x] 🔴 Build PIN entry modal for private profile switching
 - [x] 🟡 Build profile creation/edit UI (name, avatar, color theme, public/private toggle)
+- [x] 🟡 Per-profile light/dark theme toggle (CSS variable palette swap, applied on profile switch)
 
 ### Dashboard Grid
 - [x] 🔴 Install and configure `react-grid-layout`
