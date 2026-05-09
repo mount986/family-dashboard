@@ -33,11 +33,11 @@
 - [x] 🟡 Build profile creation/edit UI (name, avatar, color theme, public/private toggle)
 
 ### Dashboard Grid
-- [ ] 🔴 Install and configure `react-grid-layout`
-- [ ] 🔴 Define 5 responsive breakpoints: `xl`, `lg`, `md`, `sm`, `xs`
-- [ ] 🔴 Implement layout save on change (`POST /layouts/:profileId`)
-- [ ] 🔴 Implement layout load on profile switch (`GET /layouts/:profileId`)
-- [ ] 🟡 Build empty-state dashboard with "Add your first card" prompt
+- [x] 🔴 Install and configure `react-grid-layout`
+- [x] 🔴 Define 5 responsive breakpoints: `xl`, `lg`, `md`, `sm`, `xs`
+- [x] 🔴 Implement layout save on change (`PUT /layouts/:breakpoint`, debounced 800ms)
+- [x] 🔴 Implement layout load on profile switch (`GET /layouts`)
+- [x] 🟡 Build empty-state dashboard with "Add your first card" prompt
 - [ ] 🟢 Add smooth layout transition animations (Framer Motion)
 
 ### Deployment — k3s + Helm
