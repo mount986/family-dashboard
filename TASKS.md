@@ -77,35 +77,13 @@
 - [x] 🔴 Implement due dates and priority field
 - [x] 🔴 Build to-do card UI (compact list view)
 - [x] 🔴 Build to-do expanded / full-screen view
-- [ ] 🟡 Implement task archiving (completed tasks archived, not deleted)
-- [ ] 🟢 Add due date badge and overdue highlighting
-
-### To-Do List — Kanban Board View
-- [ ] 🔴 Add `status` column to `todo_items` DB schema (`todo` | `in_progress` | `done`) + migration
-- [ ] 🔴 Update `UpdateTodoItemInput` type and `PATCH /todo-items/:id` API to support status changes
-- [ ] 🔴 Build `KanbanColumn` component — renders a labeled column with its todo cards
-- [ ] 🔴 Build `KanbanCard` component — card-style representation of a single todo item
-- [ ] 🔴 Implement drag-and-drop between kanban columns (update item status on drop)
-- [ ] 🔴 Add view-mode toggle (list ↔ kanban) to the todo card header and expanded view
-- [ ] 🟡 Persist view-mode preference per todo list (store in card `config` JSON)
-- [ ] 🟡 Optimistic status updates — reflect drag instantly, roll back on API error
-- [ ] 🟢 Animate card movement between columns (Framer Motion layout animations)
 
 ### Grocery List
 - [x] 🔴 Define `grocery_items` DB schema + migration
 - [x] 🔴 Build CRUD API for grocery items
 - [x] 🔴 Build grocery card UI with category grouping
 - [x] 🔴 Implement check-off and "Done Shopping" clear action
-- [ ] 🟡 Build item history / quick re-add from recent items
 - [x] 🟢 Add item quantity field
-
-### Grocery List — Saved Favorites
-- [ ] 🔴 Define `favorite_grocery_items` DB table (name, category, default quantity) + migration
-- [ ] 🔴 Build CRUD API for favorites (`GET/POST/DELETE /grocery/favorites`)
-- [ ] 🔴 Add favorite toggle (star icon) to each grocery item — marks/unmarks it as a saved favorite
-- [ ] 🔴 Build "Add from Favorites" picker UI — shows all saved favorites, one-tap to add to current list
-- [ ] 🟡 Support batch-adding multiple favorites to the list in one action
-- [ ] 🟢 Sync favorite's default name, category, and quantity into the new item on add
 
 ### Real-Time Sync
 - [ ] 🔴 Set up WebSocket server in Fastify (`@fastify/websocket`)
@@ -190,3 +168,34 @@
 - [ ] 🟡 Test PIN rate limiting and session expiry
 - [ ] 🟡 Verify private card content is excluded at API layer (not just UI)
 - [ ] 🟢 Lighthouse audit — target 90+ on Performance and Accessibility
+
+---
+
+## Phase 5 — New Card Types & Enhanced Features
+> Kanban view, grocery favorites, calendar, weather, and iframe embeds.
+
+### To-Do List Enhancements
+- [ ] 🟡 Implement task archiving (completed tasks archived, not deleted)
+- [ ] 🟢 Add due date badge and overdue highlighting
+
+### To-Do List — Kanban Board View
+- [ ] 🔴 Add `status` column to `todo_items` DB schema (`todo` | `in_progress` | `done`) + migration
+- [ ] 🔴 Update `UpdateTodoItemInput` type and `PATCH /todo-items/:id` API to support status changes
+- [ ] 🔴 Build `KanbanColumn` component — renders a labeled column with its todo cards
+- [ ] 🔴 Build `KanbanCard` component — card-style representation of a single todo item
+- [ ] 🔴 Implement drag-and-drop between kanban columns (update item status on drop)
+- [ ] 🔴 Add view-mode toggle (list ↔ kanban) to the todo card header and expanded view
+- [ ] 🟡 Persist view-mode preference per todo list (store in card `config` JSON)
+- [ ] 🟡 Optimistic status updates — reflect drag instantly, roll back on API error
+- [ ] 🟢 Animate card movement between columns (Framer Motion layout animations)
+
+### Grocery List Enhancements
+- [ ] 🟡 Build item history / quick re-add from recent items
+
+### Grocery List — Saved Favorites
+- [ ] 🔴 Define `favorite_grocery_items` DB table (name, category, default quantity) + migration
+- [ ] 🔴 Build CRUD API for favorites (`GET/POST/DELETE /grocery/favorites`)
+- [ ] 🔴 Add favorite toggle (star icon) to each grocery item — marks/unmarks it as a saved favorite
+- [ ] 🔴 Build "Add from Favorites" picker UI — shows all saved favorites, one-tap to add to current list
+- [ ] 🟡 Support batch-adding multiple favorites to the list in one action
+- [ ] 🟢 Sync favorite's default name, category, and quantity into the new item on add
