@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "family-dashboard.fullname" . }}-web
+  labels:
+    {{- include "family-dashboard.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "family-dashboard.webSelectorLabels" . | nindent 4 }}

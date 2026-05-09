@@ -1,0 +1,15 @@
+{{- if not .Values.storage.existingClaim }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "family-dashboard.pvcName" . }}
+  labels:
+    {{- include "family-dashboard.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storage.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+{{- end }}

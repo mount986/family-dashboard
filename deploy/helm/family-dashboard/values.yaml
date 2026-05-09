@@ -1,0 +1,81 @@
+# ── Image config ──────────────────────────────────────────────────────────────
+image:
+  api:
+    repository: ghcr.io/mount986/family-dashboard-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  web:
+    repository: ghcr.io/mount986/family-dashboard-web
+    tag: latest
+    pullPolicy: IfNotPresent
+
+# ── App config (non-secret) ───────────────────────────────────────────────────
+app:
+  # Public URL the browser uses to reach the dashboard (used for CORS + cookie domain)
+  webOrigin: "https://dashboard.home.ts.net"
+  logLevel: "info"
+  # API port (must match EXPOSE in Dockerfile.api)
+  apiPort: 3001
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# Override with --set secrets.jwtSecret=<value> or a pre-created K8s Secret.
+# If existingSecret is set, the chart uses that Secret instead of creating one.
+secrets:
+  jwtSecret: ""
+  existingSecret: ""
+  existingSecretKey: "jwt-secret"
+
+# ── Persistent storage for SQLite ─────────────────────────────────────────────
+storage:
+  size: 1Gi
+  # k3s ships local-path as the default StorageClass
+  storageClass: local-path
+  # Override to reuse an existing PVC (e.g. after a reinstall)
+  existingClaim: ""
+
+# ── Ingress ───────────────────────────────────────────────────────────────────
+ingress:
+  # Traefik IngressRoute requires the ingressClassName below
+  className: traefik
+  host: dashboard.home.ts.net
+  # Name of the TLS secret (cert-manager or manual)
+  tlsSecretName: family-dashboard-tls
+  annotations: {}
+
+# ── Resource limits ───────────────────────────────────────────────────────────
+resources:
+  api:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  web:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+# ── Probes ────────────────────────────────────────────────────────────────────
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 30
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+# ── Backup cronjob ────────────────────────────────────────────────────────────
+backup:
+  enabled: true
+  # cron schedule (default: 2 AM daily)
+  schedule: "0 2 * * *"
+  # Host path where backups are written (node-local)
+  hostPath: /var/backups/family-dashboard
+  # Keep N most recent backup files
+  retainCount: 7

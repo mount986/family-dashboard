@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "family-dashboard.fullname" . }}-config
+  labels:
+    {{- include "family-dashboard.labels" . | nindent 4 }}
+data:
+  WEB_ORIGIN: {{ .Values.app.webOrigin | quote }}
+  LOG_LEVEL: {{ .Values.app.logLevel | quote }}
+  PORT: {{ .Values.app.apiPort | toString | quote }}

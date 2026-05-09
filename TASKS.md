@@ -43,15 +43,15 @@
 ### Deployment — k3s + Helm
 - [ ] 🔴 Install k3s on local server
 - [ ] 🔴 Install Tailscale Kubernetes Operator and join Tailnet
-- [ ] 🔴 Write `Dockerfile` for the Node.js/Fastify app
-- [ ] 🔴 Write `Dockerfile` for the nginx static frontend
-- [ ] 🔴 Scaffold Helm chart (`Chart.yaml`, `values.yaml`, `templates/`)
-- [ ] 🔴 Write `deployment-app.yaml` (replicas: 1, SQLite constraint)
-- [ ] 🔴 Write `deployment-static.yaml`
-- [ ] 🔴 Write `pvc.yaml` (ReadWriteOnce, local-path storage class)
-- [ ] 🔴 Write `secret.yaml` for API keys
-- [ ] 🔴 Write `configmap.yaml` for app config
-- [ ] 🔴 Write Traefik `ingress.yaml` with TLS
+- [x] 🔴 Write `Dockerfile` for the Node.js/Fastify app
+- [x] 🔴 Write `Dockerfile` for the nginx static frontend
+- [x] 🔴 Scaffold Helm chart (`Chart.yaml`, `values.yaml`, `templates/`)
+- [x] 🔴 Write `deployment-app.yaml` (replicas: 1, SQLite constraint)
+- [x] 🔴 Write `deployment-web.yaml`
+- [x] 🔴 Write `pvc.yaml` (ReadWriteOnce, local-path storage class)
+- [x] 🔴 Write `secret.yaml` for API keys
+- [x] 🔴 Write `configmap.yaml` for app config
+- [x] 🔴 Write Traefik `ingress.yaml` with TLS
 - [ ] 🟡 Configure MagicDNS hostname (e.g., `dashboard.home.ts.net`)
 - [ ] 🟡 Verify end-to-end deploy with `helm upgrade --install`
 
@@ -152,7 +152,7 @@
 - [ ] 🟢 Dark mode support
 
 ### Helm & Ops Hardening
-- [ ] 🔴 Write `cronjob-backup.yaml` (nightly SQLite → host path)
+- [x] 🔴 Write `cronjob-backup.yaml` (nightly SQLite → host path)
 - [ ] 🔴 Add liveness and readiness probes to app Deployment
 - [ ] 🔴 Set resource requests and limits on all containers
 - [ ] 🟡 Configure Traefik rate-limiting middleware
