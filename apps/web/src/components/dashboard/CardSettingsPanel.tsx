@@ -72,14 +72,14 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-slate-950/50"
+        className="fixed inset-0 z-60 bg-slate-950/50"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Panel — slides in from the right */}
       <div
-        className="fixed right-0 top-0 bottom-0 z-50 w-80 bg-slate-900 border-l border-slate-700 flex flex-col shadow-2xl"
+        className="fixed right-0 top-0 bottom-0 z-60 w-80 bg-slate-900 border-l border-slate-700 flex flex-col shadow-2xl"
         style={{
           transform: 'translateX(0)',
           transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1)',
