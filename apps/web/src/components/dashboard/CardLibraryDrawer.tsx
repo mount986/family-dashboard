@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Breakpoint, Card, CardLayout } from '@family-dashboard/types'
 import { useSaveLayout } from '@/api/layouts'
+import { useDeleteCard } from '@/api/cards'
 
 // ── Type metadata ─────────────────────────────────────────────────────────────
 
@@ -38,6 +39,7 @@ interface CardLibraryDrawerProps {
   isAdmin: boolean
   onClose: () => void
   onQuickAdd?: (type: Card['type']) => Promise<void>
+  onSettings?: (card: Card) => void
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -51,19 +53,23 @@ export function CardLibraryDrawer({
   isAdmin,
   onClose,
   onQuickAdd,
+  onSettings,
 }: CardLibraryDrawerProps) {
   const saveLayout = useSaveLayout()
+  const deleteCard = useDeleteCard()
 
   const [quickAddPending, setQuickAddPending] = useState<Card['type'] | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const libraryCards = allCards.filter((c) => !visibleCardIds.has(c.id))
 
   function handleAddCard(card: Card) {
     const newEntry = computeDefaultLayout(card.id, currentLayout, cols)
-    saveLayout.mutate(
-      { breakpoint: currentBreakpoint, layout: [...currentLayout, newEntry] },
-      { onSuccess: onClose }
-    )
+    saveLayout.mutate({ breakpoint: currentBreakpoint, layout: [...currentLayout, newEntry] })
+  }
+
+  function handleDelete(cardId: string) {
+    deleteCard.mutate(cardId, { onSuccess: () => setConfirmDeleteId(null) })
   }
 
   async function handleQuickAddClick(type: Card['type']) {
@@ -154,19 +160,23 @@ export function CardLibraryDrawer({
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Hidden Cards
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {libraryCards.map((card) => {
-                  const meta = TYPE_META[card.type]
-                  const isPending =
-                    saveLayout.isPending &&
-                    saveLayout.variables?.layout.at(-1)?.cardId === card.id
+              <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))' }}>
+              {libraryCards.map((card) => {
+                const meta = TYPE_META[card.type]
+                const addPending = saveLayout.isPending && saveLayout.variables?.layout.at(-1)?.cardId === card.id
+                const isConfirming = confirmDeleteId === card.id
+                const isDeleting = deleteCard.isPending && confirmDeleteId === card.id
 
-                  return (
+                return (
+                  <div
+                    key={card.id}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 min-w-0"
+                  >
+                    {/* Add-to-board area */}
                     <button
-                      key={card.id}
                       onClick={() => handleAddCard(card)}
-                      disabled={isPending}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-500 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                      disabled={addPending}
+                      className="flex items-center gap-2 flex-1 min-w-0 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
                     >
                       <span
                         className="w-6 h-6 rounded-md flex items-center justify-center text-xs flex-shrink-0"
@@ -174,15 +184,54 @@ export function CardLibraryDrawer({
                       >
                         {meta.emoji}
                       </span>
-                      <div className="min-w-0 flex flex-col">
-                        <span className="text-sm font-medium text-slate-200 truncate">
-                          {card.title}
-                        </span>
-                        <span className="text-xs text-slate-500">{meta.label}</span>
+                      <div className="min-w-0">
+                        <span className="block text-sm font-medium text-slate-200 truncate">{card.title}</span>
+                        <span className="block text-xs text-slate-500">{meta.label}</span>
                       </div>
                     </button>
-                  )
-                })}
+
+                    {/* Action buttons / delete confirm */}
+                    {isAdmin && (
+                      isConfirming ? (
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => handleDelete(card.id)}
+                            disabled={isDeleting}
+                            className="text-xs text-rose-400 hover:text-rose-300 font-medium transition-colors disabled:opacity-50"
+                          >
+                            {isDeleting ? '…' : 'Confirm'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {onSettings && (
+                            <button
+                              onClick={() => onSettings(card)}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors"
+                              aria-label="Settings"
+                            >
+                              ⚙
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setConfirmDeleteId(card.id)}
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-xs bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors"
+                            aria-label="Delete"
+                          >
+                            🗑
+                          </button>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )
+              })}
               </div>
             </div>
           )}

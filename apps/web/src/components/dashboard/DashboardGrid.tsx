@@ -132,7 +132,6 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
         const colW = Math.floor(COLS[currentBp] / 2)
         const newEntry: CardLayout = { cardId: card.id, x: 0, y: bottomY, w: colW, h: 4, isMinimized: false }
         await saveLayoutAsync({ breakpoint: currentBp, layout: [...existingLayout, newEntry] })
-        setLibraryOpen(false)
         setEditMode(true)
       } catch (err) {
         console.error('Quick-add failed:', err)
@@ -277,7 +276,7 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
           cols={COLS[currentBp]}
           isAdmin={isAdmin}
           onClose={() => setLibraryOpen(false)}
-          {...(isAdmin ? { onQuickAdd: handleQuickAdd } : {})}
+          {...(isAdmin ? { onQuickAdd: handleQuickAdd, onSettings: (card: Card) => setSettingsCard(card) } : {})}
         />
       )}
     </div>
