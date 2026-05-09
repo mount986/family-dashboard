@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "family-dashboard.fullname" . }}-web
+  labels:
+    {{- include "family-dashboard.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "family-dashboard.webSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "family-dashboard.webSelectorLabels" . | nindent 8 }}
+        {{- include "family-dashboard.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.image.web.repository }}:{{ .Values.image.web.tag }}"
+          imagePullPolicy: {{ .Values.image.web.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources.web | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+            # 101 is the conventional UID for the nginx unprivileged user.
+            runAsUser: 101
+            allowPrivilegeEscalation: false

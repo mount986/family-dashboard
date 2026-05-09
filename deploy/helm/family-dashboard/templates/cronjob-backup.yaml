@@ -1,0 +1,46 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "family-dashboard.fullname" . }}-backup
+  labels:
+    {{- include "family-dashboard.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "family-dashboard.labels" . | nindent 12 }}
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:3.20
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  cp /data/family-dashboard.db /backup/family-dashboard-${TIMESTAMP}.db
+                  cd /backup
+                  ls -t | tail -n +$(( {{ .Values.backup.retainCount }} + 1 )) | xargs -r rm -f
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ include "family-dashboard.pvcName" . }}
+            - name: backup
+              hostPath:
+                path: {{ .Values.backup.hostPath }}
+{{- end }}
