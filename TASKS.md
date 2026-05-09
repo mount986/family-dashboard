@@ -66,8 +66,10 @@
 - [x] 🔴 Implement card settings slide-out panel
 - [x] 🔴 Implement card maximize / restore (full viewport overlay)
 - [x] 🔴 Implement card hide (remove from view, keep in library)
-- [x] 🔴 Build card library drawer (browse + add hidden/new cards)
-- [ ] 🔴 Implement card privacy toggle (shared vs. private to profile)
+- [x] 🔴 Build card library drawer (quick-add by type, manage hidden cards)
+- [x] 🔴 Implement card delete (settings panel + library drawer, with confirmation)
+- [x] 🟡 Implement card rename via settings panel
+- [x] 🟡 Implement card shared/visibility toggle (UI — API enforcement in Phase 5)
 - [x] 🟡 Build card type registry (maps card type string → component)
 
 ### To-Do List
@@ -147,7 +149,6 @@
 - [ ] 🟡 Card maximize/restore transition
 - [ ] 🟡 Profile switch transition
 - [ ] 🟢 Skeleton loading states for all cards
-- [ ] 🟢 Dark mode support
 
 ### Helm & Ops Hardening
 - [x] 🔴 Write `cronjob-backup.yaml` (nightly SQLite → host path)
@@ -191,6 +192,9 @@
 
 ### Grocery List Enhancements
 - [ ] 🟡 Build item history / quick re-add from recent items
+
+### Card System
+- [ ] 🟡 Enforce card privacy at API layer (filter private cards by profile)
 
 ### Grocery List — Saved Favorites
 - [ ] 🔴 Define `favorite_grocery_items` DB table (name, category, default quantity) + migration
