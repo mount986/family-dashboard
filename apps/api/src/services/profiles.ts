@@ -21,6 +21,7 @@ function rowToSummary(row: typeof profiles.$inferSelect): ProfileSummary {
     name: row.name,
     avatarUrl: row.avatarUrl,
     colorTheme: row.colorTheme,
+    theme: (row.theme as 'light' | 'dark') ?? 'dark',
     isAdmin: row.isAdmin,
   }
 }
@@ -55,6 +56,7 @@ export async function createProfile(input: CreateProfileInput): Promise<Profile>
     name: input.name,
     avatarUrl: input.avatarUrl ?? null,
     colorTheme: input.colorTheme ?? '#6366f1',
+    theme: input.theme ?? 'dark',
     isAdmin: input.isAdmin ?? false,
     pinHash,
     pinFailures: 0,
@@ -78,6 +80,7 @@ export async function updateProfile(
       ...(input.name !== undefined ? { name: input.name } : {}),
       ...(input.avatarUrl !== undefined ? { avatarUrl: input.avatarUrl } : {}),
       ...(input.colorTheme !== undefined ? { colorTheme: input.colorTheme } : {}),
+      ...(input.theme !== undefined ? { theme: input.theme } : {}),
       ...(input.isAdmin !== undefined ? { isAdmin: input.isAdmin } : {}),
     })
     .where(eq(profiles.id, id))

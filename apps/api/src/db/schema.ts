@@ -7,6 +7,7 @@ export const profiles = sqliteTable('profiles', {
   name: text('name').notNull(),
   avatarUrl: text('avatar_url'),
   colorTheme: text('color_theme').notNull().default('#6366f1'),
+  theme: text('theme', { enum: ['light', 'dark'] }).notNull().default('dark'),
   isAdmin: integer('is_admin', { mode: 'boolean' }).notNull().default(false),
   pinHash: text('pin_hash'),
   pinFailures: integer('pin_failures').notNull().default(0),

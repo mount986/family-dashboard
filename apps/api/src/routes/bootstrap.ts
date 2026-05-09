@@ -43,6 +43,8 @@ export const bootstrapRoutes: FastifyPluginAsync = async (server) => {
       const session = {
         profileId: profile.id,
         profileName: profile.name,
+        colorTheme: profile.colorTheme,
+        theme: profile.theme,
         isAdmin: true,
       }
 
