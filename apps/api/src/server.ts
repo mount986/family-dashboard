@@ -11,6 +11,7 @@ import { cardRoutes } from './routes/cards.js'
 import { layoutRoutes } from './routes/layouts.js'
 import { todoRoutes } from './routes/todos.js'
 import { groceryRoutes } from './routes/grocery.js'
+import { wsRoutes } from './ws/routes.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -55,9 +56,8 @@ export async function buildServer() {
   await server.register(layoutRoutes, { prefix: '/api' })
   await server.register(todoRoutes, { prefix: '/api' })
   await server.register(groceryRoutes, { prefix: '/api' })
+  await server.register(wsRoutes)
 
-  //
-  // TODO Phase 2: Register WebSocket handler
   // TODO Phase 3: Register calendar routes
   // TODO Phase 3: Register weather routes
 

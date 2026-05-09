@@ -2,6 +2,7 @@ import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
 import type { CreateTodoItemInput, UpdateTodoItemInput } from '@family-dashboard/types'
 import * as todoService from '../services/todos.js'
 import * as cardService from '../services/cards.js'
+import { broadcast } from '../ws/broadcaster.js'
 
 // ── Auth guard ────────────────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ export const todoRoutes: FastifyPluginAsync = async (server) => {
     },
     async (request, reply) => {
       const item = await todoService.createItem(request.params.listId, request.body)
+      broadcast({ type: 'todo_changed', listId: request.params.listId })
       return reply.code(201).send({ data: item })
     }
   )
@@ -114,6 +116,7 @@ export const todoRoutes: FastifyPluginAsync = async (server) => {
     async (request, reply) => {
       const item = await todoService.updateItem(request.params.itemId, request.body)
       if (!item) return reply.code(404).send({ error: 'not_found', message: 'Item not found', statusCode: 404 })
+      broadcast({ type: 'todo_changed', listId: request.params.listId })
       return { data: item }
     }
   )
@@ -132,6 +135,7 @@ export const todoRoutes: FastifyPluginAsync = async (server) => {
     },
     async (request, reply) => {
       await todoService.deleteItem(request.params.itemId)
+      broadcast({ type: 'todo_changed', listId: request.params.listId })
       return reply.code(204).send()
     }
   )

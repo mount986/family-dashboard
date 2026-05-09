@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
 import type { CreateGroceryItemInput, UpdateGroceryItemInput } from '@family-dashboard/types'
 import * as groceryService from '../services/grocery.js'
+import { broadcast } from '../ws/broadcaster.js'
 
 async function requireSession(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -38,6 +39,7 @@ export const groceryRoutes: FastifyPluginAsync = async (server) => {
     },
     async (request, reply) => {
       const item = await groceryService.createItem(request.user.profileId, request.body)
+      broadcast({ type: 'grocery_changed' })
       return reply.code(201).send({ data: item })
     }
   )
@@ -64,6 +66,7 @@ export const groceryRoutes: FastifyPluginAsync = async (server) => {
     async (request, reply) => {
       const item = await groceryService.updateItem(request.params.id, request.body)
       if (!item) return reply.code(404).send({ error: 'not_found', message: 'Item not found', statusCode: 404 })
+      broadcast({ type: 'grocery_changed' })
       return { data: item }
     }
   )
@@ -77,6 +80,7 @@ export const groceryRoutes: FastifyPluginAsync = async (server) => {
     },
     async (request, reply) => {
       await groceryService.deleteItem(request.params.id)
+      broadcast({ type: 'grocery_changed' })
       return reply.code(204).send()
     }
   )
@@ -87,6 +91,7 @@ export const groceryRoutes: FastifyPluginAsync = async (server) => {
     { preHandler: requireSession },
     async (_request, reply) => {
       await groceryService.clearChecked()
+      broadcast({ type: 'grocery_changed' })
       return reply.code(204).send()
     }
   )
