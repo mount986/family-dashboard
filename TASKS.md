@@ -62,11 +62,11 @@
 > Grocery list, to-do list, card system, and real-time sync.
 
 ### Card System
-- [ ] 🔴 Build card shell component (header, controls, resize handle)
-- [ ] 🔴 Implement card settings slide-out panel
-- [ ] 🔴 Implement card maximize / restore (full viewport overlay)
-- [ ] 🔴 Implement card hide (remove from view, keep in library)
-- [ ] 🔴 Build card library drawer (browse + add hidden/new cards)
+- [x] 🔴 Build card shell component (header, controls, resize handle)
+- [x] 🔴 Implement card settings slide-out panel
+- [x] 🔴 Implement card maximize / restore (full viewport overlay)
+- [x] 🔴 Implement card hide (remove from view, keep in library)
+- [x] 🔴 Build card library drawer (browse + add hidden/new cards)
 - [ ] 🔴 Implement card privacy toggle (shared vs. private to profile)
 - [ ] 🟡 Build card type registry (maps card type string → component)
 
