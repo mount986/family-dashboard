@@ -9,6 +9,8 @@ import { profileRoutes } from './routes/profiles.js'
 import { bootstrapRoutes } from './routes/bootstrap.js'
 import { cardRoutes } from './routes/cards.js'
 import { layoutRoutes } from './routes/layouts.js'
+import { todoRoutes } from './routes/todos.js'
+import { groceryRoutes } from './routes/grocery.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -51,9 +53,10 @@ export async function buildServer() {
   await server.register(profileRoutes, { prefix: '/api' })
   await server.register(cardRoutes, { prefix: '/api' })
   await server.register(layoutRoutes, { prefix: '/api' })
+  await server.register(todoRoutes, { prefix: '/api' })
+  await server.register(groceryRoutes, { prefix: '/api' })
 
-  // TODO Phase 2: Register todo routes
-  // TODO Phase 2: Register grocery routes
+  //
   // TODO Phase 2: Register WebSocket handler
   // TODO Phase 3: Register calendar routes
   // TODO Phase 3: Register weather routes

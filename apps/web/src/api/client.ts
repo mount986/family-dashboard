@@ -14,11 +14,12 @@ class ApiResponseError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const hasBody = init?.body !== undefined
   const res = await fetch(`/api${path}`, {
     ...init,
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
       ...init?.headers,
     },
   })

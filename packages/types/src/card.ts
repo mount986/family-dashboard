@@ -59,7 +59,7 @@ export interface Card {
 export interface CreateCardInput {
   type: CardType
   title: string
-  config: CardConfig
+  config?: Partial<CardConfig>
   isShared?: boolean
   isPrivate?: boolean
 }

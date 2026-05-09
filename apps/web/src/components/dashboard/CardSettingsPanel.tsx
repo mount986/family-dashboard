@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
 import type { Card } from '@family-dashboard/types'
-import { useUpdateCard } from '@/api/cards'
+import { useUpdateCard, useDeleteCard } from '@/api/cards'
 
 // ── Icon metadata per card type ───────────────────────────────────────────────
 
@@ -29,10 +29,11 @@ interface CardSettingsPanelProps {
 export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelProps) {
   const meta = TYPE_META[card.type]
   const updateCard = useUpdateCard()
+  const deleteCard = useDeleteCard()
 
-  // Controlled title input, synced from card prop
   const [title, setTitle] = useState(card.title)
   const [isShared, setIsShared] = useState(card.isShared)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   // Re-sync if the card prop changes (e.g. after a mutation invalidates the query)
   useEffect(() => {
@@ -182,7 +183,36 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
         </div>
 
         {/* ── Footer ── */}
-        <div className="px-4 py-3 border-t border-slate-800">
+        <div className="px-4 py-3 border-t border-slate-800 space-y-2">
+          {isAdmin && (
+            confirmDelete ? (
+              <div className="space-y-2">
+                <p className="text-xs text-rose-400 text-center">Delete this card permanently?</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="flex-1 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => deleteCard.mutate(card.id, { onSuccess: onClose })}
+                    disabled={deleteCard.isPending}
+                    className="flex-1 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-sm font-medium transition-colors"
+                  >
+                    {deleteCard.isPending ? '…' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="w-full py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-sm font-medium transition-colors border border-rose-500/20"
+              >
+                Delete Card
+              </button>
+            )
+          )}
           <button
             onClick={onClose}
             className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"

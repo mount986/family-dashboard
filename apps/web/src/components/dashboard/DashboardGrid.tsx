@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import type { Card } from '@family-dashboard/types'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import type { Layout } from 'react-grid-layout'
-import { useCards } from '@/api/cards'
+import { useCards, useCreateCard } from '@/api/cards'
 import { useLayouts, useSaveLayout, useHideCard } from '@/api/layouts'
 import { CardFrame } from './CardFrame'
 import { CardMaximizeOverlay } from './CardMaximizeOverlay'
@@ -23,6 +23,15 @@ const BREAKPOINTS: Record<Breakpoint, number> = {
 }
 
 const ROW_HEIGHT = 80
+
+const DEFAULT_NAMES: Record<Card['type'], string> = {
+  'todo':          'To-Do List',
+  'grocery':       'Grocery List',
+  'calendar':      'Calendar',
+  'weather':       'Weather',
+  'iframe':        'Web Embed',
+  'chore-tracker': 'Chore Tracker',
+}
 
 // ── Layout conversion helpers ─────────────────────────────────────────────────
 
@@ -66,8 +75,9 @@ interface DashboardGridProps {
 export function DashboardGrid({ isAdmin }: DashboardGridProps) {
   const { data: cards = [], isLoading: cardsLoading } = useCards()
   const { data: savedLayouts, isLoading: layoutsLoading } = useLayouts()
-  const { mutate: saveLayout } = useSaveLayout()
+  const { mutate: saveLayout, mutateAsync: saveLayoutAsync } = useSaveLayout()
   const { mutate: hideCard } = useHideCard()
+  const { mutateAsync: createCard } = useCreateCard()
 
   const [editMode, setEditMode] = useState(false)
   const [currentBp, setCurrentBp] = useState<Breakpoint>('lg')
@@ -111,6 +121,26 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
     [hideCard]
   )
 
+  const handleQuickAdd = useCallback(
+    async (type: Card['type']) => {
+      try {
+        const card = await createCard({ type, title: DEFAULT_NAMES[type], isShared: true })
+        const existingLayout = savedLayouts?.[currentBp] ?? []
+        const bottomY = existingLayout.length > 0
+          ? Math.max(...existingLayout.map((cl) => cl.y + cl.h))
+          : 0
+        const colW = Math.floor(COLS[currentBp] / 2)
+        const newEntry: CardLayout = { cardId: card.id, x: 0, y: bottomY, w: colW, h: 4, isMinimized: false }
+        await saveLayoutAsync({ breakpoint: currentBp, layout: [...existingLayout, newEntry] })
+        setLibraryOpen(false)
+        setEditMode(true)
+      } catch (err) {
+        console.error('Quick-add failed:', err)
+      }
+    },
+    [createCard, saveLayoutAsync, currentBp, savedLayouts]
+  )
+
   // ── Loading ──────────────────────────────────────────────────────────────────
 
   if (cardsLoading || layoutsLoading) {
@@ -121,37 +151,30 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
     )
   }
 
-  if (cards.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full gap-2 text-center px-4">
-        <p className="text-slate-400 text-lg font-medium">No cards yet</p>
-        <p className="text-slate-600 text-sm">
-          {isAdmin
-            ? 'Ask an admin to create cards for this dashboard.'
-            : 'Ask an admin to add cards to the dashboard.'}
-        </p>
-      </div>
-    )
-  }
-
   // ── Derive visible vs. library cards ─────────────────────────────────────────
-  // A profile with zero layout entries is brand-new — show all cards at defaults.
-  // Once the profile has saved positions, only show cards that are in the layout.
+  // savedLayouts is the authority for which cards are on the board.
+  // localLayouts only overrides x/y/w/h for smooth in-progress drag/resize.
+  const mergeBp = (bp: Breakpoint): CardLayout[] => {
+    const saved = savedLayouts?.[bp] ?? []
+    const local = localLayouts[bp]
+    if (!local) return saved
+    const localMap = new Map(local.map((cl) => [cl.cardId, cl]))
+    return saved.map((cl) => localMap.get(cl.cardId) ?? cl)
+  }
 
   const mergedLayouts: DashboardLayout = {
-    xl: localLayouts.xl ?? savedLayouts?.xl ?? [],
-    lg: localLayouts.lg ?? savedLayouts?.lg ?? [],
-    md: localLayouts.md ?? savedLayouts?.md ?? [],
-    sm: localLayouts.sm ?? savedLayouts?.sm ?? [],
-    xs: localLayouts.xs ?? savedLayouts?.xs ?? [],
+    xl: mergeBp('xl'),
+    lg: mergeBp('lg'),
+    md: mergeBp('md'),
+    sm: mergeBp('sm'),
+    xs: mergeBp('xs'),
   }
 
-  const hasAnyLayout = Object.values(mergedLayouts).some((bp) => bp.length > 0)
   const layoutCardIds = new Set(
     Object.values(mergedLayouts).flatMap((bp) => bp.map((cl) => cl.cardId))
   )
 
-  const visibleCards = hasAnyLayout ? cards.filter((c) => layoutCardIds.has(c.id)) : cards
+  const visibleCards = cards.filter((c) => layoutCardIds.has(c.id))
   const cardIds = visibleCards.map((c) => c.id)
   const rglLayouts = buildRglLayouts(cardIds, mergedLayouts)
 
@@ -164,16 +187,18 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
     <div className="h-full flex flex-col">
       {/* ── Toolbar ── */}
       <div className="flex items-center gap-2 justify-end px-4 py-2 border-b border-slate-800 flex-shrink-0">
-        {libraryCardCount > 0 && (
+        {(isAdmin || libraryCardCount > 0) && (
           <button
             onClick={() => setLibraryOpen(true)}
             className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 flex items-center gap-1.5"
           >
             <span>＋</span>
-            <span>Library</span>
-            <span className="bg-slate-700 text-slate-300 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
-              {libraryCardCount}
-            </span>
+            <span>{isAdmin ? 'Add Card' : 'Library'}</span>
+            {libraryCardCount > 0 && (
+              <span className="bg-slate-700 text-slate-300 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
+                {libraryCardCount}
+              </span>
+            )}
           </button>
         )}
         <button
@@ -189,7 +214,16 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
         </button>
       </div>
 
+      {/* ── Empty state (non-admin only — admins always see the grid + Add Card) ── */}
+      {visibleCards.length === 0 && !isAdmin && (
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 text-center px-4">
+          <p className="text-slate-400 text-lg font-medium">No cards on your board</p>
+          <p className="text-slate-600 text-sm">Ask an admin to add cards to the dashboard.</p>
+        </div>
+      )}
+
       {/* ── Grid ── */}
+      {(visibleCards.length > 0 || isAdmin) && (
       <div className="flex-1 overflow-auto">
         <ResponsiveGridLayout
           className="layout"
@@ -218,6 +252,7 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
           ))}
         </ResponsiveGridLayout>
       </div>
+      )}
 
       {/* ── Overlays ── */}
       {maximizedCard && (
@@ -239,7 +274,9 @@ export function DashboardGrid({ isAdmin }: DashboardGridProps) {
           currentBreakpoint={currentBp}
           currentLayout={currentLayout}
           cols={COLS[currentBp]}
+          isAdmin={isAdmin}
           onClose={() => setLibraryOpen(false)}
+          {...(isAdmin ? { onQuickAdd: handleQuickAdd } : {})}
         />
       )}
     </div>

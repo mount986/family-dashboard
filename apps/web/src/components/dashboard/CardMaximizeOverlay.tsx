@@ -1,6 +1,18 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import type { Card } from '@family-dashboard/types'
+import { TodoCardExpanded } from '@/components/cards/TodoCardExpanded'
+import { GroceryCardExpanded } from '@/components/cards/GroceryCardExpanded'
+
+function CardExpandedBody({ card }: { card: Card }) {
+  if (card.type === 'todo') return <TodoCardExpanded card={card} />
+  if (card.type === 'grocery') return <GroceryCardExpanded />
+  return (
+    <div className="flex items-center justify-center h-full">
+      <p className="text-slate-600 text-sm">{card.type} — expanded view coming soon</p>
+    </div>
+  )
+}
 
 // ── Icon metadata per card type ───────────────────────────────────────────────
 
@@ -71,10 +83,8 @@ function CardMaximizeOverlayInner({ card, onClose }: CardMaximizeOverlayProps) {
         </div>
 
         {/* ── Body ── */}
-        <div className="flex-1 overflow-auto p-4">
-          <div className="h-full flex items-center justify-center">
-            <p className="text-slate-600 text-xs">Content coming in Phase 2</p>
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <CardExpandedBody card={card} />
         </div>
       </div>
     </div>

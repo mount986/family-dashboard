@@ -19,6 +19,11 @@ export interface TodoItem {
   createdAt: string
 }
 
+export interface CreateTodoListInput {
+  name: string
+  cardId: string
+}
+
 export interface CreateTodoItemInput {
   text: string
   assignedTo?: string

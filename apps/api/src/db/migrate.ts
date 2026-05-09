@@ -3,5 +3,5 @@ import { migrate } from 'drizzle-orm/libsql/migrator'
 import { db } from './client.js'
 
 console.log('Running migrations…')
-migrate(db, { migrationsFolder: './src/db/migrations' })
+await migrate(db, { migrationsFolder: './src/db/migrations' })
 console.log('Migrations complete.')
