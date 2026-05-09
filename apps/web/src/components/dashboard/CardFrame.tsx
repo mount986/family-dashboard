@@ -35,8 +35,13 @@ export function CardFrame({ card, editMode }: CardFrameProps) {
           : 'border-slate-800',
       ].join(' ')}
     >
-      {/* ── Header ── */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-800 flex-shrink-0">
+      {/* ── Header ── drag-handle class is required by DashboardGrid's draggableHandle */}
+      <div
+        className={[
+          'flex items-center gap-2 px-3 py-2 border-b border-slate-800 flex-shrink-0',
+          editMode ? 'drag-handle cursor-grab active:cursor-grabbing' : '',
+        ].join(' ')}
+      >
         <span
           className={[
             'text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide flex-shrink-0',
@@ -49,7 +54,7 @@ export function CardFrame({ card, editMode }: CardFrameProps) {
           {card.title}
         </span>
         {editMode && (
-          <span className="text-slate-600 text-xs flex-shrink-0">⠿</span>
+          <span className="text-slate-500 text-xs flex-shrink-0 pointer-events-none">⠿</span>
         )}
       </div>
 
