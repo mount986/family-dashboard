@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ProfileSwitcher } from '@/components/profiles/ProfileSwitcher'
 import { ProfileManager } from '@/components/profiles/ProfileManager'
@@ -14,6 +14,14 @@ export default function App() {
   const session = useSessionStore((s) => s.session) ?? serverSession
 
   // Check whether first-time setup is needed
+  // Apply the active profile's theme and accent color to the document root.
+  // Runs on every profile switch so the transition is immediate.
+  useEffect(() => {
+    const root = document.documentElement
+    root.setAttribute('data-theme', session?.theme ?? 'dark')
+    root.style.setProperty('--accent', session?.colorTheme ?? '#6366f1')
+  }, [session?.theme, session?.colorTheme])
+
   const { data: bootstrapData, isLoading: bootstrapLoading } = useQuery({
     queryKey: ['bootstrap'],
     queryFn: () => api.get<{ needed: boolean }>('/bootstrap'),

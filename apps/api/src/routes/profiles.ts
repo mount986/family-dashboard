@@ -71,6 +71,7 @@ export const profileRoutes: FastifyPluginAsync = async (server) => {
             name:       { type: 'string', minLength: 1, maxLength: 50 },
             avatarUrl:  { type: ['string', 'null'] },
             colorTheme: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' },
+            theme:      { type: 'string', enum: ['light', 'dark'] },
             isAdmin:    { type: 'boolean' },
           },
           additionalProperties: false,
@@ -145,6 +146,8 @@ export const profileRoutes: FastifyPluginAsync = async (server) => {
       const session = {
         profileId: profile.id,
         profileName: profile.name,
+        colorTheme: profile.colorTheme,
+        theme: profile.theme,
         isAdmin: profile.isAdmin,
       }
 

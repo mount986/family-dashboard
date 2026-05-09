@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Profile, ProfileSummary } from '@family-dashboard/types'
+import type { Profile, ProfileSummary, ProfileTheme } from '@family-dashboard/types'
 import { useCreateProfile, useUpdateProfile, useDeleteProfile } from '@/api/profiles'
 
 const THEME_COLORS = [
@@ -19,6 +19,7 @@ export function ProfileForm({ profile, onDone }: ProfileFormProps) {
 
   const [name, setName] = useState(profile?.name ?? '')
   const [colorTheme, setColorTheme] = useState(profile?.colorTheme ?? '#6366f1')
+  const [theme, setTheme] = useState<ProfileTheme>(profile?.theme ?? 'dark')
   const [isAdmin, setIsPrivate] = useState(profile?.isAdmin ?? false)
   const [pin, setPin] = useState('')
   const [confirmPin, setConfirmPin] = useState('')
@@ -49,12 +50,14 @@ export function ProfileForm({ profile, onDone }: ProfileFormProps) {
           id: profile.id,
           name: name.trim(),
           colorTheme,
+          theme,
           isAdmin,
         })
       } else {
         await createProfile.mutateAsync({
           name: name.trim(),
           colorTheme,
+          theme,
           isAdmin,
           ...(isAdmin ? { pin } : {}),
         })
@@ -103,6 +106,29 @@ export function ProfileForm({ profile, onDone }: ProfileFormProps) {
               {colorTheme === color && (
                 <span className="flex items-center justify-center w-full h-full text-white text-xs">✓</span>
               )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Theme toggle */}
+      <div>
+        <label className="block text-sm font-medium text-slate-300 mb-2">Theme</label>
+        <div className="flex gap-2">
+          {(['dark', 'light'] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTheme(t)}
+              className={[
+                'flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-colors',
+                theme === t
+                  ? 'bg-indigo-600 border-indigo-600 text-white'
+                  : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-slate-500',
+              ].join(' ')}
+            >
+              <span>{t === 'dark' ? '🌙' : '☀️'}</span>
+              <span className="capitalize">{t}</span>
             </button>
           ))}
         </div>
