@@ -118,8 +118,8 @@
 
 ### iFrame / Embed Cards
 - [x] 🔴 Build generic iframe card component
-- [ ] 🔴 Implement Open Graph / oEmbed server-side proxy for link previews
-- [ ] 🔴 Graceful fallback to link preview when `X-Frame-Options` blocks embed
+- [x] 🔴 Implement Open Graph / meta tag server-side proxy for link previews
+- [x] 🔴 Graceful fallback to link preview when `X-Frame-Options` blocks embed
 - [ ] 🔴 Embed chore tracker with active profile passed as URL query param
 - [x] 🟡 Build "Add external card" UI (URL input in settings panel)
 - [ ] 🟡 Implement tap-to-activate overlay for iframes on touch devices
