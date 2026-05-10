@@ -110,10 +110,10 @@
 - [ ] 🟢 Add new event quick-entry from the card
 
 ### Weather
-- [ ] 🔴 Register for OpenWeatherMap API key (free tier)
-- [ ] 🔴 Build `/api/weather` proxy endpoint with 30-min server-side cache
-- [ ] 🔴 Build weather card UI — current conditions + 7-day forecast
-- [ ] 🟡 Make location configurable per profile
+- [x] 🔴 Register for OpenWeatherMap API key (free tier)
+- [x] 🔴 Build `/api/weather` proxy endpoint with 30-min server-side cache
+- [x] 🔴 Build weather card UI — current conditions + 5-day forecast
+- [x] 🟡 Make location configurable per card (location + imperial/metric toggle in settings)
 - [ ] 🟢 Add hourly forecast in expanded view
 
 ### iFrame / Embed Cards
