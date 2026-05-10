@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
-import type { Card, IframeCardConfig } from '@family-dashboard/types'
+import type { Card, IframeCardConfig, WeatherCardConfig } from '@family-dashboard/types'
 import { useUpdateCard, useDeleteCard } from '@/api/cards'
 
 // ── Icon metadata per card type ───────────────────────────────────────────────
@@ -34,9 +34,14 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
   const hasUrl = card.type === 'iframe' || card.type === 'chore-tracker'
   const existingUrl = hasUrl ? (card.config as Partial<IframeCardConfig>).url ?? '' : ''
 
+  const isWeather = card.type === 'weather'
+  const weatherCfg = isWeather ? (card.config as Partial<WeatherCardConfig>) : null
+
   const [title, setTitle] = useState(card.title)
   const [isShared, setIsShared] = useState(card.isShared)
   const [url, setUrl] = useState(existingUrl)
+  const [location, setLocation] = useState(weatherCfg?.location ?? '')
+  const [units, setUnits] = useState<'metric' | 'imperial'>(weatherCfg?.units ?? 'imperial')
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   // Re-sync if the card prop changes (e.g. after a mutation invalidates the query)
@@ -44,7 +49,12 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
     setTitle(card.title)
     setIsShared(card.isShared)
     if (hasUrl) setUrl((card.config as Partial<IframeCardConfig>).url ?? '')
-  }, [card.title, card.isShared, card.config, hasUrl])
+    if (isWeather) {
+      const wc = card.config as Partial<WeatherCardConfig>
+      setLocation(wc.location ?? '')
+      setUnits(wc.units ?? 'imperial')
+    }
+  }, [card.title, card.isShared, card.config, hasUrl, isWeather])
 
   const titleRef = useRef<HTMLInputElement>(null)
 
@@ -79,6 +89,25 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
   function handleUrlKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
     if (e.key === 'Escape') { setUrl(existingUrl); (e.target as HTMLInputElement).blur() }
+  }
+
+  function commitLocation() {
+    const trimmed = location.trim()
+    setLocation(trimmed)
+    const cfg = card.config as Partial<WeatherCardConfig>
+    if (trimmed !== (cfg.location ?? '')) {
+      updateCard.mutate({ id: card.id, config: { location: trimmed, units } as Partial<WeatherCardConfig> })
+    }
+  }
+
+  function handleLocationKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
+    if (e.key === 'Escape') { setLocation((card.config as Partial<WeatherCardConfig>).location ?? ''); (e.target as HTMLInputElement).blur() }
+  }
+
+  function changeUnits(next: 'metric' | 'imperial') {
+    setUnits(next)
+    updateCard.mutate({ id: card.id, config: { location, units: next } as Partial<WeatherCardConfig> })
   }
 
   function toggleShared() {
@@ -169,6 +198,46 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
                     Paste a URL — press Enter or click away to save.
                   </p>
                 </section>
+              )}
+
+              {/* Section: Weather location + units */}
+              {isWeather && (
+                <>
+                  <section className="space-y-2">
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                      Location
+                    </p>
+                    <input
+                      type="text"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      onBlur={commitLocation}
+                      onKeyDown={handleLocationKeyDown}
+                      placeholder="e.g. London, GB"
+                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-slate-500 transition-colors placeholder-slate-600"
+                    />
+                    <p className="text-slate-500 text-xs">City name, or "City, Country Code".</p>
+                  </section>
+                  <section className="space-y-2">
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">Units</p>
+                    <div className="flex gap-2">
+                      {(['imperial', 'metric'] as const).map((u) => (
+                        <button
+                          key={u}
+                          onClick={() => changeUnits(u)}
+                          className={[
+                            'flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors border',
+                            units === u
+                              ? 'bg-indigo-600 border-indigo-500 text-white'
+                              : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200',
+                          ].join(' ')}
+                        >
+                          {u === 'imperial' ? '°F (Imperial)' : '°C (Metric)'}
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                </>
               )}
 
               {/* Section: Visibility */}
