@@ -11,6 +11,7 @@ import { cardRoutes } from './routes/cards.js'
 import { layoutRoutes } from './routes/layouts.js'
 import { todoRoutes } from './routes/todos.js'
 import { groceryRoutes } from './routes/grocery.js'
+import { iframeRoutes } from './routes/iframe.js'
 import { wsRoutes } from './ws/routes.js'
 
 export async function buildServer() {
@@ -56,6 +57,7 @@ export async function buildServer() {
   await server.register(layoutRoutes, { prefix: '/api' })
   await server.register(todoRoutes, { prefix: '/api' })
   await server.register(groceryRoutes, { prefix: '/api' })
+  await server.register(iframeRoutes, { prefix: '/api' })
   await server.register(wsRoutes)
 
   // TODO Phase 3: Register calendar routes
