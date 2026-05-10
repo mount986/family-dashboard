@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
-import type { Card } from '@family-dashboard/types'
+import type { Card, IframeCardConfig } from '@family-dashboard/types'
 import { useUpdateCard, useDeleteCard } from '@/api/cards'
 
 // ── Icon metadata per card type ───────────────────────────────────────────────
@@ -31,15 +31,20 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
   const updateCard = useUpdateCard()
   const deleteCard = useDeleteCard()
 
+  const hasUrl = card.type === 'iframe' || card.type === 'chore-tracker'
+  const existingUrl = hasUrl ? (card.config as Partial<IframeCardConfig>).url ?? '' : ''
+
   const [title, setTitle] = useState(card.title)
   const [isShared, setIsShared] = useState(card.isShared)
+  const [url, setUrl] = useState(existingUrl)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   // Re-sync if the card prop changes (e.g. after a mutation invalidates the query)
   useEffect(() => {
     setTitle(card.title)
     setIsShared(card.isShared)
-  }, [card.title, card.isShared])
+    if (hasUrl) setUrl((card.config as Partial<IframeCardConfig>).url ?? '')
+  }, [card.title, card.isShared, card.config, hasUrl])
 
   const titleRef = useRef<HTMLInputElement>(null)
 
@@ -60,6 +65,20 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
       setTitle(card.title)
       titleRef.current?.blur()
     }
+  }
+
+  function commitUrl() {
+    const trimmed = url.trim()
+    const normalized = trimmed && !trimmed.startsWith('http') ? `https://${trimmed}` : trimmed
+    setUrl(normalized)
+    if (normalized !== existingUrl) {
+      updateCard.mutate({ id: card.id, config: { url: normalized } as Partial<IframeCardConfig> })
+    }
+  }
+
+  function handleUrlKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
+    if (e.key === 'Escape') { setUrl(existingUrl); (e.target as HTMLInputElement).blur() }
   }
 
   function toggleShared() {
@@ -130,6 +149,27 @@ export function CardSettingsPanel({ card, isAdmin, onClose }: CardSettingsPanelP
                   placeholder="Card title"
                 />
               </section>
+
+              {/* Section: URL (iframe / chore-tracker only) */}
+              {hasUrl && (
+                <section className="space-y-2">
+                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                    Website URL
+                  </p>
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    onBlur={commitUrl}
+                    onKeyDown={handleUrlKeyDown}
+                    placeholder="https://example.com"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-slate-500 transition-colors placeholder-slate-600"
+                  />
+                  <p className="text-slate-500 text-xs">
+                    Paste a URL — press Enter or click away to save.
+                  </p>
+                </section>
+              )}
 
               {/* Section: Visibility */}
               <section className="space-y-2">
