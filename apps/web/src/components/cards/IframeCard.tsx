@@ -3,9 +3,18 @@ import { useQuery } from '@tanstack/react-query'
 import type { Card, IframeCardConfig } from '@family-dashboard/types'
 import { api } from '@/api/client'
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+
 interface ResolveResult {
   finalUrl: string
   canEmbed: boolean
+  preview: {
+    title?: string
+    description?: string
+    image?: string
+    siteName?: string
+    favicon: string
+  }
 }
 
 function useResolvedUrl(url: string | undefined) {
@@ -17,6 +26,62 @@ function useResolvedUrl(url: string | undefined) {
     retry: false,
   })
 }
+
+// ── Link preview (shown when embedding is blocked) ────────────────────────────
+
+function LinkPreview({ resolved, cardTitle }: { resolved: ResolveResult; cardTitle: string }) {
+  const { finalUrl, preview } = resolved
+  const title = preview.title ?? cardTitle
+  const domain = (() => { try { return new URL(finalUrl).hostname.replace(/^www\./, '') } catch { return finalUrl } })()
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Hero image */}
+      {preview.image && (
+        <div className="flex-shrink-0 h-32 overflow-hidden bg-slate-800">
+          <img
+            src={preview.image}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+          />
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col justify-between p-3 min-h-0">
+        <div className="space-y-1.5 min-h-0">
+          {/* Site name + favicon */}
+          <div className="flex items-center gap-1.5">
+            <img src={preview.favicon} alt="" className="w-4 h-4 rounded-sm flex-shrink-0" />
+            <span className="text-slate-500 text-[11px] truncate">{preview.siteName ?? domain}</span>
+          </div>
+
+          {/* Title */}
+          <p className="text-slate-100 text-sm font-medium leading-snug line-clamp-2">{title}</p>
+
+          {/* Description */}
+          {preview.description && (
+            <p className="text-slate-400 text-xs leading-relaxed line-clamp-3">{preview.description}</p>
+          )}
+        </div>
+
+        {/* Open link */}
+        <a
+          href={finalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-center gap-1.5 w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors flex-shrink-0"
+        >
+          <span>Open {domain}</span>
+          <span className="text-slate-500">↗</span>
+        </a>
+      </div>
+    </div>
+  )
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 interface IframeCardProps {
   card: Card
@@ -52,24 +117,8 @@ export function IframeCard({ card }: IframeCardProps) {
   const finalUrl = resolved?.finalUrl ?? configuredUrl
   const canEmbed = resolved?.canEmbed ?? true
 
-  if (!canEmbed) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-        <span className="text-3xl">🚫</span>
-        <p className="text-slate-300 text-sm font-medium">Embedding blocked</p>
-        <p className="text-slate-500 text-xs leading-relaxed">
-          This site does not allow embedding. You can still open it in a new tab.
-        </p>
-        <a
-          href={finalUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
-        >
-          Open in new tab ↗
-        </a>
-      </div>
-    )
+  if (!canEmbed && resolved) {
+    return <LinkPreview resolved={resolved} cardTitle={card.title} />
   }
 
   return (
